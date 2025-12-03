@@ -443,3 +443,52 @@ textarea.erro {
 .top input {
     margin-right: 10px;
 }
+
+/* wrapper do campo */
+.search-input {
+  position: relative;
+  width: 260px;
+}
+
+/* input */
+#buscarPlano {
+  width: 15%;
+  padding: 10px 38px 10px 14px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: 0.2s;
+  background: #fff;
+  color: #333;
+}
+
+/* placeholder */
+#buscarPlano::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+/* foco */
+#buscarPlano:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 6px rgba(74,144,226,0.4);
+}
+
+/* ícone dentro do input */
+.search-input i {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 15px;
+  pointer-events: none;
+}
+
+/* responsivo */
+@media (max-width: 780px) {
+  .search-input {
+    width: 100%;
+  }
+}
