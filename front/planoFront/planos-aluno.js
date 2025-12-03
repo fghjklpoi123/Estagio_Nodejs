@@ -101,11 +101,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       const valor = formatarValor(plano.preco || 0);
 
       // Verifica se o aluno já está inscrito nessa modalidade
-      const jaInscrito = inscricoes.some(insc => insc.modalidade_id === plano.modalidade_id);
+      // `inscricoes` retorna objetos de modalidade com campo `id`
+      const jaInscrito = inscricoes.some(insc => Number(insc.id) === Number(plano.modalidade_id));
 
-      let btnHtml = jaInscrito
-        ? `<button class="btn-assinar" disabled style="opacity: 0.6; cursor: not-allowed;">✓ Já Inscrito</button>`
-        : `<button class="btn-assinar" data-plano-id="${plano.id}">Assinar Plano</button>`;
+      let btnHtml;
+      if (jaInscrito) {
+        btnHtml = `<button class="cancel-btn" data-modalidade-id="${plano.modalidade_id}">Cancelar Assinatura</button>`;
+      } else {
+        btnHtml = `<button class="btn-assinar" data-plano-id="${plano.id}">Assinar Plano</button>`;
+      }
 
       card.innerHTML = `
         <h3>${escapeHtml(modalidadeNome)}</h3>
@@ -118,6 +122,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!jaInscrito) {
         btn.addEventListener('click', () => {
           assinarPlano(plano.id, btn);
+        });
+      } else {
+        // cancelar assinatura ao clicar
+        btn.addEventListener('click', async () => {
+          const alunoId = localStorage.getItem('alunoId');
+          if (!alunoId) { showStatus('error', 'Aluno não identificado. Faça login novamente.'); return; }
+          if (!confirm('Confirmar cancelamento da assinatura desta modalidade?')) return;
+          btn.disabled = true;
+          const modalidadeId = Number(btn.dataset.modalidadeId || btn.getAttribute('data-modalidade-id'));
+          try {
+            const res = await api.cancelarInscricao(alunoId, modalidadeId);
+            showStatus('success', res.mensagem || 'Assinatura cancelada com sucesso');
+            // atualizar inscrições locais e re-render
+            await carregarInscricoes();
+            render();
+          } catch (err) {
+            console.error('Erro ao cancelar assinatura:', err);
+            showStatus('error', err.message || 'Erro ao cancelar assinatura');
+            btn.disabled = false;
+          }
         });
       }
 

@@ -58,8 +58,8 @@ export const updateModalidade = (id, data) => request(`/modalidades/${id}`, { me
 export const deleteModalidade = (id) => request(`/modalidades/${id}`, { method: 'DELETE' });
 
 // Movimentação (alunos_modalidades)
-export const inscreverAluno = (alunoId, modalidadeId) => request(`/alunos/${alunoId}/inscrever`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ modalidadeId }) });
-export const cancelarInscricao = (alunoId, modalidadeId) => request(`/alunos/${alunoId}/cancelar/${modalidadeId}`, { method: 'DELETE' });
+export const inscreverAluno = (alunoId, modalidadeId) => request(`/aluno-modalidade/vincular`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ alunoId, modalidadeId }) });
+export const cancelarInscricao = (alunoId, modalidadeId) => request(`/aluno-modalidade/${alunoId}/${modalidadeId}`, { method: 'DELETE' });
 
 export default {
   getAlunos, getAluno, createAluno, updateAluno, deleteAluno,
