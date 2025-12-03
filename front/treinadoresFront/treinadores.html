@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Treinadores</title>
+
+  <link rel="stylesheet" href="treinadores.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <script src="/js/authGuard.js"></script>
+</head>
+<body>
+
+  <!-- SIDEBAR (mesmo padrão) -->
+  <!-- SIDEBAR (cole no lugar do bloco atual) -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="Logo" />
+    <span class="brand-text">Nome da Empresa</span>
+  </div>
+
+    <ul class="menu">
+      <li><a href="../homeFront/home.html" data-menu="home"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="../alunosFront/alunos.html" data-menu="alunos"><i class="fa-solid fa-user"></i> Alunos</a></li>
+      <li><a href="../treinadoresFront/treinadores.html" data-menu="treinadores"><i class="fa-solid fa-user-tie"></i> Treinadores</a></li>
+      <li><a href="../modalidadesFront/modalidades.html" data-menu="modalidades"><i class="fa-solid fa-dumbbell"></i> Modalidades</a></li>
+      <li><a href="../planoFront/plano.html" data-menu="planos"><i class="fa-solid fa-list"></i> Planos (Admin)</a></li>
+      <li><a href="../planoFront/planos-aluno.html" data-menu="meus-planos"><i class="fa-solid fa-ticket"></i> Meus Planos</a></li>
+      <li><a href="../relatorios/relatorios.html" data-menu="relatorios"><i class="fa-solid fa-file"></i> Relatórios</a></li>
+    </ul>  <ul class="menu-bottom">
+    <!-- <li><a href="config.html" data-menu="config"><i class="fa-solid fa-gear"></i> Configurações</a></li> -->
+    <li><a href="login.html" data-menu="sair"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
+  </ul>
+</aside>
+
+
+
+  <!-- CONTENT -->
+  <main class="content">
+    <div class="top">
+      <h1>Treinadores</h1>
+
+      <div class="filters">
+        <input type="text" id="buscarTreinador" placeholder="Buscar treinador...">
+        <select id="filtroModalidadeTreinador">
+          <option value="">Modalidade</option>
+        </select>
+      </div>
+
+      <button id="btnNovoTreinador" class="btn-primary">
+        <i class="fa-solid fa-plus"></i> Novo Treinador
+      </button>
+    </div>
+
+    <section class="lista" id="listaTreinadores"></section>
+    <div id="paginacaoTreinadores" class="paginacao"></div>
+  </main>
+
+  <!-- MODAL -->
+  <div class="modal-bg" id="modalTreinador">
+    <div class="modal">
+      <h2 id="tituloModalTreinador">Novo Treinador</h2>
+
+      <label>Nome</label>
+      <input type="text" id="nomeTreinador">
+
+      <label>E-mail</label>
+      <input type="email" id="emailTreinador">
+
+      <label>CPF</label>
+      <input type="text" id="cpfTreinador" placeholder="000.000.000-00">
+
+      <label>Telefone</label>
+      <input type="tel" id="telefoneTreinador" placeholder="(00) 00000-0000">
+
+      <label>Sexo</label>
+      <select id="sexoTreinador">
+        <option value="">Selecione</option>
+        <option value="F">Feminino (F)</option>
+        <option value="M">Masculino (M)</option>
+        <option value="O">Outro (O)</option>
+      </select>
+
+      <label>Data de nascimento</label>
+      <input type="date" id="nascTreinador">
+
+      <label>Modalidade</label>
+      <select id="modalidadeTreinador">
+        <!-- carregado via JS -->
+      </select>
+
+      <label>Senha</label>
+      <input type="password" id="senhaTreinador" placeholder="••••••••" maxlength="32">
+
+      <div class="modal-actions">
+        <button class="btn-primary" id="salvarTreinador">Salvar</button>
+        <button class="btn-secondary" id="fecharModalTreinador">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/treinadoresFront/treinadores.js"></script>
+</body>
+</html>

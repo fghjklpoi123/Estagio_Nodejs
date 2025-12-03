@@ -1,0 +1,200 @@
+/* GERAL */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial; }
+
+body {
+    background: #f3f6fb;
+    display: flex;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 260px;
+    background: linear-gradient(180deg, #0b3b7e, #0f4fa8);
+    padding: 25px 20px;
+    position: fixed; top: 0; bottom: 0; left: 0;
+    color: #fff;
+}
+
+.sidebar-logo {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 1.3rem; font-weight: bold; margin-bottom: 35px;
+}
+.sidebar-logo img { width: 48px; }
+
+.menu, .menu-bottom { list-style: none; margin-top: 20px; }
+.menu a, .menu-bottom a {
+    color: #dce7ff; text-decoration: none; padding: 10px;
+    display: flex; align-items: center; gap: 12px; border-radius: 8px;
+}
+.menu a:hover, .active { background: rgba(255,255,255,0.15); }
+
+/* CONTENT */
+.content {
+    margin-left: 260px;
+    padding: 40px;
+    width: calc(100% - 260px);
+}
+
+.top { display: flex; justify-content: space-between; align-items: center; }
+
+.filters { display: flex; gap: 10px; }
+
+/* INPUTS */
+.filters select, .filters input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+/* BUTTONS */
+.btn-primary {
+    background: #0f4fa8; color: white; padding: 12px 20px;
+    border: none; border-radius: 8px; cursor: pointer;
+}
+.btn-primary:hover { background: #0b3b7e; }
+
+.btn-secondary {
+    background: #ccc; padding: 10px; border-radius: 8px; border: none;
+}
+
+/* LISTA */
+.lista {
+    margin-top: 30px;
+    display: grid; gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.card {
+    background: white; padding: 20px; border-radius: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.card h3 { font-size: 1.3rem; margin-bottom: 10px; margin-top: 10px; }
+.card span { color: #6d7b8c; font-size: 0.9rem; display: block; margin-bottom: 8px; }
+.card { padding-top: 50px; }
+
+/* botoes do card */
+.edit-btn, .delete-btn {
+    position: absolute; top: 15px; background: none; border: none; cursor: pointer;
+}
+.edit-btn { right: 45px; color: #0f4fa8; font-size: 1.1rem; }
+.delete-btn { right: 15px; color: #d9534f; font-size: 1.1rem; }
+
+/* PAGINAÇÃO */
+.paginacao { text-align: center; margin-top: 25px; }
+.paginacao button {
+    padding: 8px 14px; margin: 3px;
+    background: #0f4fa8; color: white; border: none; border-radius: 6px;
+}
+.paginacao .ativo { background: #0b3b7e; }
+
+/* MODAL */
+.modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+    display: none; justify-content: center; align-items: center;
+}
+.modal-bg.active { display: flex; }
+
+.modal {
+    background: white; padding: 25px; width: 380px; border-radius: 12px;
+}
+
+.modal input, .modal select, .modal textarea {
+    width: 100%; padding: 12px; border-radius: 8px;
+    border: 1px solid #ccc; margin-bottom: 15px;
+}
+
+textarea { height: 80px; }
+
+/* ===== SIDEBAR - padronizada igual a Alunos (cole no topo de aulas.css) ===== */
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: linear-gradient(180deg, #0b3b7e, #0f4fa8);
+  color: #fff;
+  padding: 25px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  z-index: 1000;
+  box-shadow: 4px 0 18px rgba(0,0,0,0.08);
+  overflow: auto;
+}
+
+/* LOGO */
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.sidebar-logo img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  padding: 4px;
+}
+.sidebar-logo span {
+  color: #e8f1ff;
+  font-weight: 700;
+}
+
+/* MENU */
+.sidebar .menu,
+.sidebar .menu-bottom {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebar .menu li {
+  margin-bottom: 10px;
+}
+.sidebar .menu a,
+.sidebar .menu-bottom a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #dce7ff;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  transition: background 0.12s, transform 0.08s;
+}
+.sidebar .menu a:hover {
+  background: rgba(255,255,255,0.12);
+  transform: translateX(3px);
+}
+.sidebar .menu a i {
+  width: 20px;
+  text-align: center;
+}
+.sidebar .menu a.active {
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* push bottom menu down */
+.sidebar .menu-bottom {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ensure content area is pushed to the right */
+.content {
+  margin-left: 260px !important;
+  width: calc(100% - 260px) !important;
+}
+@media (max-width: 900px) {
+  .sidebar { width: 220px; }
+  .content { margin-left: 220px; width: calc(100% - 220px); }
+}

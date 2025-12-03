@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Alunos</title>
+
+    <link rel="stylesheet" href="alunos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="/js/authGuard.js"></script>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+   <aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="Logo">
+    <span>Nome da Empresa</span>
+  </div>
+
+    <ul class="menu">
+      <li><a href="../homeFront/home.html" data-menu="home"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="../alunosFront/alunos.html" data-menu="alunos"><i class="fa-solid fa-user"></i> Alunos</a></li>
+      <li><a href="../treinadoresFront/treinadores.html" data-menu="treinadores"><i class="fa-solid fa-user-tie"></i> Treinadores</a></li>
+      <li><a href="../modalidadesFront/modalidades.html" data-menu="modalidades"><i class="fa-solid fa-dumbbell"></i> Modalidades</a></li>
+      <li><a href="../planoFront/plano.html" data-menu="planos"><i class="fa-solid fa-list"></i> Planos (Admin)</a></li>
+      <li><a href="../planoFront/planos-aluno.html" data-menu="meus-planos"><i class="fa-solid fa-ticket"></i> Meus Planos</a></li>
+      <li><a href="../relatorios/relatorios.html" data-menu="relatorios"><i class="fa-solid fa-file"></i> Relatórios</a></li>
+    </ul>  <ul class="menu-bottom">
+            <!--   <li><a href="config.html" data-menu="config"><i class="fa-solid fa-gear"></i> Configurações</a></li> -->
+            <li><a href="../loginFront/logout.html" data-menu="sair"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
+        </ul>
+    </aside>
+
+
+    <main class="content">
+
+        <div class="top">
+            <h1>Alunos</h1>
+
+            <div class="filters">
+                <input type="text" id="buscarAluno" placeholder="Buscar aluno...">
+                <select id="filtroSituacao">
+                    <option value="">Situação</option>
+                    <option value="Ativo">Ativo</option>
+                    <option value="Inativo">Inativo</option>
+                </select>
+            </div>
+
+            <button id="btnNovoAluno" class="btn-primary">
+                <i class="fa-solid fa-plus"></i> Novo Aluno
+            </button>
+        </div>
+
+        <section class="lista" id="listaAlunos"></section>
+
+        <div id="paginacao" class="paginacao"></div>
+
+    </main>
+
+    <!-- MODAL -->
+    <div class="modal-bg" id="modalAluno">
+        <div class="modal">
+
+            <h2 id="tituloModal">Novo Aluno</h2>
+
+
+
+            <label>Nome</label>
+            <input type="text" id="nomeAluno">
+
+            <label>E-mail</label>
+            <input type="email" id="emailAluno">
+
+            <label>Data de nascimento</label>
+            <input type="date" id="nascAluno">
+
+            <label>CPF</label>
+            <input type="text" id="cpfAluno" placeholder="000.000.000-00" maxlength="14">
+
+            <label>Telefone</label>
+            <input type="text" id="telefoneAluno" placeholder="(00) 00000-0000" maxlength="15">
+
+
+            <label>Sexo</label>
+            <select id="sexoAluno">
+                <option value="">Selecione</option>
+                <option value="F">Feminino (F)</option>
+                <option value="M">Masculino (M)</option>
+                <option value="O">Outro (O)</option>
+            </select>
+            <!-- ENDEREÇO (faltava este campo no seu HTML original) -->
+            <label>Endereço</label>
+            <input type="text" id="enderecoAluno">
+
+            <label>Senha</label>
+            <input type="password" id="senhaAluno" placeholder="••••••••" maxlength="32">
+
+            <label>Situação</label>
+            <select id="situacaoAluno">
+                <option value="Ativo">Ativo</option>
+                <option value="Inativo">Inativo</option>
+            </select>
+
+            <label>Observação</label>
+            <textarea id="obsAluno"></textarea>
+
+            <div class="modal-actions">
+                <button class="btn-primary" id="salvarAluno" type="button">Salvar</button>
+
+                <button class="btn-secondary" id="fecharModal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/alunosFront/alunos.js"></script>
+</body>
+</html>

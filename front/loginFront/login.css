@@ -1,0 +1,188 @@
+/* login.css - estilo moderno para "Bem-vindo ao AcadFlow" */
+
+*{ box-sizing: border-box; margin:0; padding:0; font-family: Inter, Arial, sans-serif; }
+
+:root{
+  --blue-600: #0f4fa8;
+  --blue-700: #0b3b7e;
+  --muted: #6d7b8c;
+  --card-bg: #ffffff;
+  --page-bg: #f3f6fb;
+}
+
+html,body { height:100%; background: var(--page-bg); }
+
+.login-wrapper {
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+
+/* Card central */
+.login-card{
+  width: 900px;
+  max-width: 96%;
+  height: 560px;
+  background: var(--card-bg);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(2,6,23,0.08);
+  display:flex;
+  overflow:hidden;
+}
+
+/* imagem à esquerda (40% do card) */
+/* USANDO A IMAGEM ENVIADA PELO USUÁRIO (caminho local no ambiente) */
+.login-image{
+  width: 40%;
+  min-width: 260px;
+  background-image: url("login.png");
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.05) contrast(0.95);
+}
+
+/* Conteúdo / formulário à direita */
+.login-content{
+  width: 60%;
+  padding: 56px 48px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+/* Marca / título */
+.brand h1{
+  font-size: 1.9rem;
+  color: var(--blue-700);
+  margin-bottom: 6px;
+  line-height: 1.05;
+}
+.brand-acadflow{
+  color: var(--blue-600);
+  font-weight: 700;
+}
+.tagline{
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+/* Form */
+.login-form { margin-top: 6px; display:flex; flex-direction:column; gap:12px; }
+
+.mensagem {
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  text-align: center;
+  font-weight: 600;
+}
+.mensagem.erro {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+.mensagem.sucesso {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+label{ font-weight:600; color:#233142; font-size:0.9rem; }
+input {
+  padding:12px 14px;
+  border-radius: 10px;
+  border: 1px solid #e0e6ef;
+  background: #fff;
+  font-size: 1rem;
+  outline: none;
+  transition: box-shadow .12s, border-color .12s;
+}
+input:focus{
+  border-color: var(--blue-600);
+  box-shadow: 0 6px 18px rgba(15,79,168,0.06);
+}
+
+/* Botão */
+.btn-login{
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(180deg,var(--blue-600),var(--blue-700));
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(15,79,168,0.12);
+  transition: transform .08s ease, box-shadow .12s ease;
+}
+.btn-login:hover{ transform: translateY(-2px); box-shadow: 0 12px 30px rgba(15,79,168,0.18); }
+
+/* rodapé pequeno */
+.footer-note { margin-top: 16px; color: var(--muted); font-size: 0.85rem; }
+
+/* responsivo */
+@media (max-width: 920px) {
+  .login-card { flex-direction: column-reverse; height: auto; max-width: 760px; }
+  .login-image { width: 100%; height: 220px; min-width: unset; }
+  .login-content { width: 100%; padding: 28px; }
+}
+
+/* Botão Criar Conta */
+.criar-conta-wrapper {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.btn-criar-conta {
+  background: transparent;
+  border: 2px solid #4A90E2;
+  padding: 10px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #4A90E2;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-criar-conta:hover {
+  background: #4A90E2;
+  color: white;
+}
+
+.criar-conta-wrapper {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.link-criar-conta {
+  color: #4A90E2;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 18px;
+}
+
+.link-criar-conta:hover {
+  text-decoration: underline;
+  color: #2f6ebb;
+}
+
+.login-image {
+  width: 40%;
+  background: #e8e9f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.login-image img {
+  width: 100%;
+  max-width: 550px; /* AUMENTEI AQUI */
+  object-fit: contain;
+}

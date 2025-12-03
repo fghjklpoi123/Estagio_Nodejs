@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Planos</title>
+
+  <link rel="stylesheet" href="plano.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <script src="/js/authGuard.js"></script>
+</head>
+<body>
+
+  <!-- SIDEBAR padrão -->
+ <aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="Logo">
+    <span>Nome da Empresa</span>
+  </div>
+
+    <ul class="menu">
+      <li><a href="../homeFront/home.html" data-menu="home"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="../alunosFront/alunos.html" data-menu="alunos"><i class="fa-solid fa-user"></i> Alunos</a></li>
+      <li><a href="../treinadoresFront/treinadores.html" data-menu="treinadores"><i class="fa-solid fa-user-tie"></i> Treinadores</a></li>
+      <li><a href="../modalidadesFront/modalidades.html" data-menu="modalidades"><i class="fa-solid fa-dumbbell"></i> Modalidades</a></li>
+      <li><a href="../planoFront/plano.html" data-menu="planos"><i class="fa-solid fa-list"></i> Planos (Admin)</a></li>
+      <li><a href="../planoFront/planos-aluno.html" data-menu="meus-planos"><i class="fa-solid fa-ticket"></i> Meus Planos</a></li>
+      <li><a href="../relatorios/relatorios.html" data-menu="relatorios"><i class="fa-solid fa-file"></i> Relatórios</a></li>
+    </ul>  <ul class="menu-bottom">
+    <li><a href="../loginFront/logout.html" data-menu="sair"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
+  </ul>
+</aside>
+
+  <main class="content">
+    <div class="top">
+      
+      <h1>Planos</h1>
+      <input type="text" id="buscarAluno" placeholder="Buscar Plano...">
+      <div class="controls">
+        <button class="btn-primary" id="btnNovo">+ Novo Plano</button>
+        <!-- Se quiser depois pode usar esse botão -->
+        <!-- <button class="btn-secondary" id="btnExportCsv">Exportar CSV</button> -->
+      </div>
+    </div>
+
+    <!-- FORMULÁRIO DE PLANO -->
+      <!-- MODAL DE PLANO -->
+   <section class="modal-overlay" id="formArea" aria-hidden="true">
+  <div class="card form-card modal-card" role="dialog" aria-modal="true">
+    <h3 id="formTitle"> Novo Plano</h3>
+
+    <label for="selectModalidade">Modalidade</label>
+    <select id="selectModalidade">
+      <option value="">Selecione uma modalidade</option>
+    </select>
+
+    <label for="inputValor">Valor (R$)</label>
+<input type="text" id="inputValor" inputmode="decimal" placeholder="Ex: 99,90">
+
+
+
+  <label for="descPlano">Descrição</label>
+<textarea id="descPlano" class="textarea-auto" placeholder="Descreva o plano..."></textarea>
+
+
+    <div class="form-actions">
+      <button class="btn-primary" id="btnSalvar" type="button">Salvar</button>
+      <button class="btn-secondary" id="btnCancelar" type="button">Cancelar</button>
+    </div>
+  </div>
+</section>
+
+
+    <!-- LISTA DE PLANOS -->
+    <section class="list-area">
+      <div class="card">
+        <h3>Planos Cadastrados</h3>
+        <div class="table-wrap">
+         <table id="tablePlanos" class="striped">
+  <thead>
+    <tr>
+      <th>Modalidade</th>
+      <th>Valor (R$)</th>    
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Pode manter o nome aulas.js se quiser, o conteúdo abaixo já está para Planos -->
+  <script type="module" src="plano-crud.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bem-vindo ao AcadFlow</title>
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+  <div class="login-wrapper">
+
+    <div class="login-card">
+
+      <!-- IMAGEM À ESQUERDA -->
+     <div class="login-image">
+  <img src="logo2.png" alt="Logo AcadFlow">
+</div>
+      <!-- CONTEÚDO / FORMULÁRIO À DIREITA -->
+      <div class="login-content">
+        <div class="brand">
+          <h1>Bem-vindo ao <span class="brand-acadflow">AcadFlow</span></h1>
+          <p class="tagline">O seu sistema de gestão da academia — simples e rápido.</p>
+        </div>
+
+        <form id="loginForm" class="login-form" action="/homeFront/home.html" method="GET">
+          <div id="mensagem" class="mensagem" style="display: none;"></div>
+          
+          <label for="username">E-mail</label>
+          <input id="username" name="email" type="email" placeholder="seu@exemplo.com" required>
+
+          <label for="password">Senha</label>
+          <input id="password" name="senha" type="password" placeholder="••••••••" required>
+
+          <button type="submit" class="btn-login">
+            Entrar
+          </button>
+        </form>
+
+        <div class="criar-conta-wrapper">
+  <a href="../cadastro/cadastro.html" class="link-criar-conta">Criar conta</a>
+</div>
+
+       <!--  <div class="footer-note">
+          <small>Problemas para entrar? Entre em contato com o suporte.</small>
+        </div> -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- login behavior: use login.js to create session and redirect -->
+  <script src="/loginFront/login.js"></script>
+</body>
+</html>
