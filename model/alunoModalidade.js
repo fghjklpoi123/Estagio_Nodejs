@@ -39,7 +39,6 @@ module.exports = {
         });
     },
 
-    // Retorna a última inscrição (mais recente) do aluno na tabela aluno_modalidade
     buscarUltimaInscricaoPorAluno: (alunoId) => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT am.id, am.aluno_id, am.modalidade_id, am.created_at FROM aluno_modalidade am WHERE am.aluno_id = ? ORDER BY am.created_at DESC LIMIT 1`;

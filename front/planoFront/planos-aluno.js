@@ -6,9 +6,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const buscarPlanoInput = document.getElementById('buscarPlano');
 
   let planos = [];
-  let modalidadesMap = {}; // id -> nome
+  let modalidadesMap = {}; 
 
-  // Helper para renderizar mensagem de status
   function showStatus(type, message) {
     statusContainer.innerHTML = `<div class="status-message status-${type}">${message}</div>`;
     if (type === 'success' || type === 'info') {
@@ -16,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // Helper para escapar HTML
+  
   function escapeHtml(s) {
     if (s === undefined || s === null) return '';
     return String(s).replace(/[&<>"']/g, (ch) => ({
@@ -24,14 +23,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }[ch]));
   }
 
-  // Formatar valor para BRL
   function formatarValor(valor) {
     if (!valor) return 'R$ 0,00';
     const num = parseFloat(valor) || 0;
     return 'R$ ' + num.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   }
 
-  // Carregar modalidades
   async function carregarModalidades() {
     try {
       const mods = await api.getModalidades();
@@ -44,20 +41,91 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // Carregar modalidades inscritas do aluno
   let inscricoes = [];
   async function carregarInscricoes() {
     try {
       const alunoId = localStorage.getItem('alunoId');
       if (alunoId) {
         inscricoes = await api.getAlunoModalidades(alunoId) || [];
+      } else {
+        inscricoes = [];
       }
     } catch (err) {
       console.error('Erro ao carregar inscrições:', err);
     }
   }
 
-  // Carregar planos
+  let modalOverlay = null;
+  function criarModalConfirmacao() {
+    if (modalOverlay) return modalOverlay;
+    modalOverlay = document.createElement('div');
+    modalOverlay.className = 'modal-overlay confirm-overlay';
+    modalOverlay.innerHTML = `
+      <div class="modal-card modal-confirm-card card">
+        <h3 id="confirm-title">Confirmar ação</h3>
+        <p id="confirm-text">Tem certeza?</p>
+        <div class="form-actions confirm-actions" style="margin-top:18px; justify-content: flex-end;">
+          <button type="button" class="btn-secondary btn-cancel-modal">Cancelar</button>
+          <button type="button" class="btn-primary btn-confirm-modal" style="margin-left:8px">Confirmar</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modalOverlay);
+
+    modalOverlay.querySelector('.btn-cancel-modal').addEventListener('click', () => {
+      fecharModalConfirmacao();
+    });
+
+    modalOverlay.addEventListener('click', (ev) => {
+      if (ev.target === modalOverlay) fecharModalConfirmacao();
+    });
+
+    return modalOverlay;
+  }
+
+  function abrirModalConfirmacao({ title = 'Confirmar cancelamento', text = 'Deseja realmente cancelar a assinatura desta modalidade?', onConfirm, confirmBtnClass = 'btn-danger' } = {}) {
+    const overlay = criarModalConfirmacao();
+    overlay.querySelector('#confirm-title').innerText = title;
+    overlay.querySelector('#confirm-text').innerText = text;
+
+    const confirmBtn = overlay.querySelector('.btn-confirm-modal');
+   
+    const newConfirm = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirm, confirmBtn);
+
+    
+    newConfirm.className = `btn-confirm-modal ${confirmBtnClass}`;
+
+    newConfirm.addEventListener('click', async () => {
+      newConfirm.disabled = true;
+      newConfirm.innerHTML = '<span class="spinner" style="width:16px;height:16px;margin-right:8px"></span>Processando...';
+      try {
+        await onConfirm();
+        fecharModalConfirmacao();
+      } catch (err) {
+        console.error('Erro no onConfirm do modal:', err);
+        showStatus('error', err.message || 'Erro ao processar a solicitação');
+        newConfirm.disabled = false;
+        newConfirm.innerText = 'Confirmar';
+      }
+    });
+
+    document.body.classList.add('modal-open');
+    overlay.classList.add('show');
+  }
+
+  function fecharModalConfirmacao() {
+    if (!modalOverlay) return;
+    modalOverlay.classList.remove('show');
+    document.body.classList.remove('modal-open');
+    
+    const confirmBtn = modalOverlay.querySelector('.btn-confirm-modal');
+    if (confirmBtn) {
+      confirmBtn.disabled = false;
+      confirmBtn.innerText = 'Confirmar';
+    }
+  }
+
   async function carregarPlanos() {
     try {
       await carregarInscricoes();
@@ -73,7 +141,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // Renderizar planos
   function render() {
     planosContainer.innerHTML = '';
     if (!planos || planos.length === 0) {
@@ -100,8 +167,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       const descricao = plano.descricao || 'Plano sem descrição';
       const valor = formatarValor(plano.preco || 0);
 
-      // Verifica se o aluno já está inscrito nessa modalidade
-      // `inscricoes` retorna objetos de modalidade com campo `id`
       const jaInscrito = inscricoes.some(insc => Number(insc.id) === Number(plano.modalidade_id));
 
       let btnHtml;
@@ -121,35 +186,55 @@ document.addEventListener('DOMContentLoaded', async () => {
       const btn = card.querySelector('button');
       if (!jaInscrito) {
         btn.addEventListener('click', () => {
-          assinarPlano(plano.id, btn);
+          const alunoId = localStorage.getItem('alunoId');
+          if (!alunoId) { showStatus('error', 'Aluno não identificado. Faça login novamente.'); return; }
+
+          abrirModalConfirmacao({
+            title: 'Confirmar assinatura',
+            text: `Deseja assinar o plano da modalidade "${escapeHtml(modalidadeNome)}"?`,
+            confirmBtnClass: 'btn-success',
+            onConfirm: async () => {
+              await assinarPlano(plano.id, btn);
+            }
+          });
         });
       } else {
-        // cancelar assinatura ao clicar
         btn.addEventListener('click', async () => {
           const alunoId = localStorage.getItem('alunoId');
           if (!alunoId) { showStatus('error', 'Aluno não identificado. Faça login novamente.'); return; }
-          if (!confirm('Confirmar cancelamento da assinatura desta modalidade?')) return;
-          btn.disabled = true;
+
           const modalidadeId = Number(btn.dataset.modalidadeId || btn.getAttribute('data-modalidade-id'));
-          try {
-            const res = await api.cancelarInscricao(alunoId, modalidadeId);
-            showStatus('success', res.mensagem || 'Assinatura cancelada com sucesso');
-            // atualizar inscrições locais e re-render
-            await carregarInscricoes();
-            render();
-          } catch (err) {
-            console.error('Erro ao cancelar assinatura:', err);
-            showStatus('error', err.message || 'Erro ao cancelar assinatura');
-            btn.disabled = false;
-          }
+          
+          abrirModalConfirmacao({
+            title: 'Cancelar assinatura',
+            text: `Deseja realmente cancelar a assinatura da modalidade "${escapeHtml(modalidadesMap[modalidadeId] || modalidadeId)}"?`,
+            confirmBtnClass: 'btn-danger',
+            onConfirm: async () => {
+              
+              btn.disabled = true;
+              const originalText = btn.innerHTML;
+              btn.innerHTML = '<span class="spinner" style="width:14px;height:14px;margin-right:8px"></span>Cancelando...';
+              try {
+                const res = await api.cancelarInscricao(alunoId, modalidadeId);
+                showStatus('success', res.mensagem || res.message || 'Assinatura cancelada com sucesso');
+                await carregarInscricoes();
+                render();
+              } catch (err) {
+                console.error('Erro ao cancelar assinatura:', err);
+                showStatus('error', err.message || 'Erro ao cancelar assinatura');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                throw err; 
+              }
+            }
+          });
+
         });
       }
-
       planosContainer.appendChild(card);
     });
   }
 
-  // Assinar plano
   async function assinarPlano(planoId, btn) {
     const alunoId = localStorage.getItem('alunoId');
     if (!alunoId) {
@@ -157,7 +242,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // Desabilitar botão
     btn.disabled = true;
     const btnText = btn.innerText;
     btn.innerHTML = '<span class="spinner"></span> Processando...';
@@ -165,15 +249,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       const resultado = await api.assinarPlano(planoId);
       showStatus('success', '✓ Inscrito com sucesso no plano!');
-      
-      // Recarregar após 2 segundos
+ 
       setTimeout(() => {
         window.location.reload();
       }, 2000);
     } catch (err) {
       console.error('Erro ao assinar plano:', err);
       let mensagem = err.message || 'Falha ao assinar plano';
-      // Se for erro 409 ou mensagem contém "já inscrito", mostrar mensagem específica
       if (mensagem.includes('409') || mensagem.includes('já está inscrito')) {
         mensagem = 'Você já está inscrito nessa modalidade';
         showStatus('info', mensagem);
@@ -185,12 +267,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // Event listener para busca
   buscarPlanoInput && buscarPlanoInput.addEventListener('input', () => {
     render();
   });
 
-  // Inicializar
   await carregarModalidades();
   await carregarPlanos();
 });

@@ -39,7 +39,6 @@ exports.vincular = async (req, res) => {
             return res.status(400).json({ error: 'modalidadeId é obrigatório e deve ser um número' });
         }
 
-        // Verificar se já existe vínculo
         const jaVinculado = await verificarVinculo(alunoId, modalidadeId);
         if (jaVinculado) {
             return res.status(400).json({ error: 'Aluno já está vinculado a esta modalidade' });

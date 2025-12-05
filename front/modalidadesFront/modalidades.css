@@ -1,4 +1,3 @@
-/* GERAL */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial; }
 
 body {
@@ -6,7 +5,6 @@ body {
     display: flex;
 }
 
-/* SIDEBAR */
 .sidebar {
     width: 260px;
     background: linear-gradient(180deg, #0b3b7e, #0f4fa8);
@@ -28,7 +26,7 @@ body {
 }
 .menu a:hover, .active { background: rgba(255,255,255,0.15); }
 
-/* CONTENT */
+
 .content {
     margin-left: 260px;
     padding: 40px;
@@ -39,14 +37,14 @@ body {
 
 .filters { display: flex; gap: 10px; }
 
-/* INPUTS */
+
 .filters select, .filters input {
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #ccc;
 }
 
-/* BUTTONS */
+
 .btn-primary {
     background: #0f4fa8; color: white; padding: 12px 20px;
     border: none; border-radius: 8px; cursor: pointer;
@@ -57,7 +55,7 @@ body {
     background: #ccc; padding: 10px; border-radius: 8px; border: none;
 }
 
-/* LISTA */
+
 .lista {
     margin-top: 30px;
     display: grid; gap: 20px;
@@ -73,19 +71,19 @@ body {
 .card h3 { font-size: 1.3rem; margin-bottom: 5px; }
 .card span { color: #6d7b8c; font-size: 0.9rem; display: block; }
 
-/* ensure card content doesn't overlap absolute buttons */
+
 .card { padding-top: 50px; }
 .card h3 { margin-top: 8px; margin-bottom: 8px; }
 .card p { color: #6d7b8c; margin-bottom: 8px; }
 
-/* botoes do card */
+
 .edit-btn, .delete-btn {
     position: absolute; top: 15px; background: none; border: none; cursor: pointer;
 }
 .edit-btn { right: 45px; color: #0f4fa8; font-size: 1.1rem; }
 .delete-btn { right: 15px; color: #d9534f; font-size: 1.1rem; }
 
-/* PAGINAÇÃO */
+
 .paginacao { text-align: center; margin-top: 25px; }
 .paginacao button {
     padding: 8px 14px; margin: 3px;
@@ -93,7 +91,7 @@ body {
 }
 .paginacao .ativo { background: #0b3b7e; }
 
-/* MODAL */
+
 .modal-bg {
     position: fixed; inset: 0; background: rgba(0,0,0,0.45);
     display: none; justify-content: center; align-items: center;
@@ -111,7 +109,6 @@ body {
 
 textarea { height: 80px; }
 
-/* ===== SIDEBAR - padronizada igual a Alunos (cole no topo de aulas.css) ===== */
 .sidebar {
   width: 260px;
   height: 100vh;
@@ -129,7 +126,6 @@ textarea { height: 80px; }
   overflow: auto;
 }
 
-/* LOGO */
 .sidebar-logo {
   display: flex;
   align-items: center;
@@ -151,7 +147,6 @@ textarea { height: 80px; }
   font-weight: 700;
 }
 
-/* MENU */
 .sidebar .menu,
 .sidebar .menu-bottom {
   list-style: none;
@@ -186,14 +181,12 @@ textarea { height: 80px; }
   font-weight: 700;
 }
 
-/* push bottom menu down */
 .sidebar .menu-bottom {
   margin-top: auto;
   padding-top: 10px;
   border-top: 1px solid rgba(255,255,255,0.06);
 }
 
-/* ensure content area is pushed to the right */
 .content {
   margin-left: 260px !important;
   width: calc(100% - 260px) !important;

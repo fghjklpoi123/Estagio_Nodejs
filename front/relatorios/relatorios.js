@@ -1,6 +1,6 @@
 // relatorios.js (versão de DEBUG, com porcentagens na tela + PDF)
 document.addEventListener('DOMContentLoaded', () => {
-  const LOGO_PATH = 'logo.png'; // coloque aqui o caminho da sua logo
+  const LOGO_PATH = 'logo.png'; 
 
   const tableProf = document.getElementById('tableProfessores');
   const tableAlunos = document.getElementById('tableAlunos');
@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function relatorioAlunos(){ return contarPor(p=>p.alunoNome || p.alunoCpf); }
   function relatorioHorarios(){ return contarPor(p=>{ if(!p.hora) return 'Desconhecido'; const h=String(p.hora).split(':')[0].padStart(2,'0'); return h+':00'; }); }
 
-  // renderTable agora aceita colunas que contenham 'percent' (string já formatada)
   function renderTable(tableEl, rows, cols){
     if(!tableEl){ console.warn('Tabela não encontrada:', tableEl); return; }
     const tbody = tableEl.querySelector('tbody');
@@ -48,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('DEBUG: presencas count =', pres.length);
     console.log('DEBUG: primeiras 5 presencas', pres.slice(0,5));
 
-    // Professores
     const profRaw = relatorioProfessores().map(x=>({nome:x.chave,total:x.total}));
     const totalProf = profRaw.reduce((s,it)=>s+ (Number(it.total)||0),0) || 0;
     const prof = profRaw.map(it => {
@@ -56,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return { nome: it.nome, total: it.total, percent: `${pct.toFixed(1)}%` };
     });
 
-    // Alunos
     const alunosRaw = relatorioAlunos().map(x=>({nome:x.chave,total:x.total}));
     const totalAlunos = alunosRaw.reduce((s,it)=>s+ (Number(it.total)||0),0) || 0;
     const alunos = alunosRaw.map(it => {
@@ -64,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return { nome: it.nome, total: it.total, percent: `${pct.toFixed(1)}%` };
     });
 
-    // Horários
     const horasRaw = relatorioHorarios().map(x=>({hora:x.chave,total:x.total}));
     const totalHoras = horasRaw.reduce((s,it)=>s+ (Number(it.total)||0),0) || 0;
     const horas = horasRaw.map(it => {
@@ -72,13 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
       return { hora: it.hora, total: it.total, percent: `${pct.toFixed(1)}%` };
     });
 
-    // Renderiza — agora com coluna percent
     renderTable(tableProf, prof, ['nome','total','percent']);
     renderTable(tableAlunos, alunos, ['nome','total','percent']);
     renderTable(tablePico, horas, ['hora','total','percent']);
   }
 
-  // Helper: traduz chaves para cabeçalhos humanos no PDF
   function headerLabels(cols){
     return cols.map(c => {
       if(c === 'nome') return 'Nome';
@@ -89,16 +83,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Função de geração de PDF (usa headerLabels para cabeçalho amigável)
   async function downloadPDF(title, columns, rows){
-    // columns: array de chaves (ex: ['nome','total','percent'])
     if(window.jspdf && window.jspdf.jsPDF){
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ unit: 'pt', format: 'a4' });
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
 
-      // ---- LOGO ----
       try {
         const img = new Image();
         img.src = LOGO_PATH;
@@ -109,24 +100,20 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn("Erro ao carregar a logo:", e);
       }
 
-      // ---- TÍTULO AZUL ----
       doc.setFontSize(16);
       doc.setTextColor(13, 110, 253);
       doc.setFont('helvetica', 'bold');
       doc.text(title, 120, 45);
 
-      // ---- DATA ----
       doc.setFontSize(10);
       doc.setTextColor(80);
       doc.setFont('helvetica', 'normal');
       doc.text(`Gerado em: ${new Date().toLocaleString()}`, 120, 63);
 
-      // ---- LINHA AZUL ----
       doc.setDrawColor(13, 110, 253);
       doc.setLineWidth(2);
       doc.line(40, 80, pageWidth - 40, 80);
 
-      // Prepara cabeçalho legível e corpo para autoTable
       const head = [ headerLabels(columns) ];
       const body = rows.map(r => columns.map(c => r[c] === undefined ? '' : String(r[c])));
 
@@ -163,14 +150,12 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
       } else {
-        // fallback simples
         let y = 100;
         body.forEach(r => {
           doc.text(r.join(' | '), 40, y);
           y += 14;
           if (y > pageHeight - 60) { doc.addPage(); y = 40; }
         });
-        // footer if only single page fallback
         const footerText = 'Página 1 / 1';
         const footerWidth = doc.getTextWidth(footerText);
         doc.setFontSize(10);
@@ -181,7 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
       doc.save(`${title.replace(/\s+/g,'_')}.pdf`);
     } 
     else {
-      // CSV fallback
       const csvRows = [columns.join(',')].concat(
         rows.map(r => columns.map(c => `"${(r[c]||'').toString().replace(/"/g,'""')}"`).join(','))
       );
@@ -197,7 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Eventos dos botões agora usam os novos endpoints do backend
   if (btnPdfProf) btnPdfProf.addEventListener('click', async () => {
     console.log('pdfProfessores button clicked');
     try {
@@ -240,13 +223,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch('/api/relatorios/alunos-por-modalidade');
       if (!res.ok) throw new Error('Erro ao buscar relatório');
       const data = await res.json();
-      // Gera um único PDF com seções por modalidade
       const sections = data.map(item => ({
         title: `${item.modalidade.nome} (${(item.alunos || []).length} aluno(s))`,
         columns: ['nome','cpf','telefone','situacao','data_matricula'],
         rows: (item.alunos || []).map(a => ({ nome: a.nome, cpf: a.cpf, telefone: a.telefone, situacao: a.situacao, data_matricula: a.data_matricula }))
       }));
-      // Ensure modalities with no students still provide a row
       sections.forEach(s => { if (!s.rows || s.rows.length === 0) s.rows = [{ nome: 'Sem alunos matriculados', cpf: '', telefone: '', situacao: '', data_matricula: '' }]; });
       await downloadPDFMultiSection('Relatório de Alunos por Modalidade', sections);
     } catch (err) {
@@ -255,11 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Backend reports - fetch data from API and use same downloadPDF helper
-  // Novo: gerar um único PDF com seções por modalidade
   async function downloadPDFMultiSection(title, sections){
     if (!(window.jspdf && window.jspdf.jsPDF)) {
-      // fallback: generate multiple CSVs or combine in a single CSV
       const combined = [];
       sections.forEach(s => {
         combined.push([s.title]);
@@ -279,7 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
 
-    // Header (logo + main title)
     try {
       const img = new Image(); img.src = LOGO_PATH; img.crossOrigin = 'anonymous'; await img.decode(); doc.addImage(img, 'PNG', 40, 25, 60, 60);
     } catch(e){ console.warn('Erro ao carregar logo', e); }
@@ -289,23 +266,19 @@ document.addEventListener('DOMContentLoaded', () => {
     doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 120, 63);
     doc.setDrawColor(13,110,253); doc.setLineWidth(2); doc.line(40, 80, pageWidth-40, 80);
 
-    // Keep track of vertical position
     let cursorY = 100;
 
     for (let si = 0; si < sections.length; si++){
       const sec = sections[si];
-      // Section title
+
       doc.setFontSize(12); doc.setTextColor(20); doc.setFont('helvetica','bold');
-      // If not enough space for title + table header, add page
       if (cursorY > pageHeight - 120) { doc.addPage(); cursorY = 40; }
       doc.text(sec.title, 40, cursorY);
       cursorY += 18;
 
-      // Prepare head and body
       const head = [ headerLabels(sec.columns) ];
       const body = (sec.rows||[]).map(r => sec.columns.map(c => r[c] === undefined ? '' : String(r[c])));
 
-      // Generate table
       if (doc.autoTable) {
         doc.autoTable({
           startY: cursorY,
@@ -314,13 +287,9 @@ document.addEventListener('DOMContentLoaded', () => {
           styles: { lineWidth: 0.5, lineColor: [0,0,0], fontSize: 10, cellPadding: 6 },
           headStyles: { fillColor: [13,110,253], textColor: 255 },
           margin: { left: 40, right: 40, top: 0, bottom: 40 },
-          didDrawPage: function(data) {
-            // footer handled after all sections
-          }
         });
         cursorY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 24 : cursorY + (body.length * 14) + 24;
       } else {
-        // fallback simple text
         let y = cursorY;
         body.forEach(r => {
           doc.text(r.join(' | '), 40, y);
@@ -330,11 +299,9 @@ document.addEventListener('DOMContentLoaded', () => {
         cursorY = y + 20;
       }
 
-      // After each section, if not last, add page break if close to bottom
       if (si < sections.length - 1 && cursorY > pageHeight - 120) { doc.addPage(); cursorY = 40; }
     }
 
-    // Footer with pages
     const pageCount = doc.internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++){
       doc.setPage(i);
@@ -347,7 +314,6 @@ document.addEventListener('DOMContentLoaded', () => {
     doc.save(`${title.replace(/\s+/g,'_')}.pdf`);
   }
 
-  // Atualizar headerLabels para novos campos
   function headerLabels(cols){
     return cols.map(c => {
       if(c === 'nome') return 'Nome';
@@ -377,7 +343,6 @@ document.addEventListener('DOMContentLoaded', () => {
         professor: m.professor ? m.professor.nome : 'Nenhum',
         status: m.status || 'Ativa'
       }));
-      // add total geral as single-row at bottom
       rows.push({ nome: 'TOTAL GERAL', total_alunos: data.total_geral || 0, professor: '', status: '' });
       await downloadPDF('Modalidades_Mais_Populares', ['nome','total_alunos','professor','status'], rows);
     } catch (err) {

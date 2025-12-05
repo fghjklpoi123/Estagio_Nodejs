@@ -1,9 +1,3 @@
-// Serviço de assinatura de planos com transação atômica
-// Responsável por:
-// 1. Validar plano e modalidade
-// 2. Verificar duplicidade de inscrição
-// 3. Executar vínculo de plano + inscrição em modalidade de forma atômica
-
 const db = require('../db');
 const { buscarAlunoPorId } = require('../model/aluno');
 const { buscarPlanoPorId } = require('../model/plano');
@@ -11,14 +5,13 @@ const { buscarModalidadePorId } = require('../model/modalidade');
 const { verificarVinculo } = require('../model/alunoModalidade');
 
 /**
- * Assina um plano para um aluno e o inscreve automaticamente na modalidade associada ao plano
- * @param {number} alunoId - ID do aluno (obtido do token/autenticação)
- * @param {number} planoId - ID do plano a assinar
- * @returns {Promise} { status, message, aluno_modalidade? }
+ * @param {number} alunoId 
+ * @param {number} planoId 
+ * @returns {Promise} 
  */
 async function assinarPlano(alunoId, planoId) {
     try {
-        // 1. Validar aluno
+       
         const aluno = await buscarAlunoPorId(alunoId);
         if (!aluno) {
             return {
@@ -27,7 +20,6 @@ async function assinarPlano(alunoId, planoId) {
             };
         }
 
-        // 2. Validar plano
         const plano = await buscarPlanoPorId(planoId);
         if (!plano) {
             return {
@@ -44,7 +36,6 @@ async function assinarPlano(alunoId, planoId) {
             };
         }
 
-        // 3. Validar modalidade
         const modalidade = await buscarModalidadePorId(modalidadeId);
         if (!modalidade) {
             return {
@@ -53,7 +44,6 @@ async function assinarPlano(alunoId, planoId) {
             };
         }
 
-        // 4. Verificar se aluno já está inscrito na modalidade
         const jaInscrito = await verificarVinculo(alunoId, modalidadeId);
         if (jaInscrito) {
             return {
@@ -62,7 +52,6 @@ async function assinarPlano(alunoId, planoId) {
             };
         }
 
-        // 5. Executar transação: vincular plano + inscrever em modalidade
         return await executarTransacao(alunoId, planoId, modalidadeId);
 
     } catch (error) {
@@ -74,9 +63,6 @@ async function assinarPlano(alunoId, planoId) {
     }
 }
 
-/**
- * Executa a transação de vínculo de plano + inscrição em modalidade de forma atômica
- */
 function executarTransacao(alunoId, planoId, modalidadeId) {
     return new Promise((resolve) => {
         db.beginTransaction((err) => {
@@ -88,7 +74,6 @@ function executarTransacao(alunoId, planoId, modalidadeId) {
                 });
             }
 
-            // 1. Inserir em alunos_modalidades
             const sqlInsertAlunoModalidade = `
                 INSERT INTO aluno_modalidade (aluno_id, modalidade_id, created_at)
                 VALUES (?, ?, NOW())
@@ -107,7 +92,6 @@ function executarTransacao(alunoId, planoId, modalidadeId) {
 
                 const alunoModalidadeId = result.insertId;
 
-                // 2. Commit da transação
                 db.commit((err) => {
                     if (err) {
                         console.error('Erro ao fazer commit:', err);

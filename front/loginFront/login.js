@@ -1,4 +1,3 @@
-// login.js - autentica aluno ou professor contra o backend
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('loginForm');
   const emailInput = document.getElementById('username');
@@ -17,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      // Tentar login como aluno primeiro
       const respAluno = await fetch('/api/login/aluno', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -26,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (respAluno.ok) {
         const dataAluno = await respAluno.json();
-        // Login bem-sucedido como aluno
         localStorage.setItem('alunoId', dataAluno.aluno.id);
         localStorage.setItem('alunoNome', dataAluno.aluno.nome);
         localStorage.setItem('tipo', 'aluno');
@@ -37,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Se falhar como aluno, tentar como professor
       const respProfessor = await fetch('/api/login/professor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -46,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (respProfessor.ok) {
         const dataProfessor = await respProfessor.json();
-        // Login bem-sucedido como professor
         localStorage.setItem('professorId', dataProfessor.professor.id);
         localStorage.setItem('professorNome', dataProfessor.professor.nome);
         localStorage.setItem('tipo', 'professor');
@@ -57,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Ambas as requisições falharam
       const erro = await respAluno.json();
       mostrarMensagem(erro.erro || 'Email ou senha inválidos', 'erro');
 

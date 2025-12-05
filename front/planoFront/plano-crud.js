@@ -1,7 +1,7 @@
 import api from '/js/apiClient.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Elementos do formulário
+
   const modal = document.getElementById('formArea');
   const btnNovo = document.getElementById('btnNovo');
   const btnSalvar = document.getElementById('btnSalvar');
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   let modalidades = [];
   let editId = null;
 
-  // Helper functions
+  
   function escapeHtml(s) {
     if (s === undefined || s === null) return '';
     return String(s).replace(/[&<>"']/g, ch => ({
@@ -60,13 +60,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     el.style.height = Math.min(el.scrollHeight, 300) + 'px';
   }
 
-  // Textarea auto-resize
   if (descPlano) {
     descPlano.addEventListener('input', () => ajustarAlturaTextarea(descPlano));
     ajustarAlturaTextarea(descPlano);
   }
 
-  // Input valor: aceita apenas dígitos e vírgula
   if (inputValor) {
     inputValor.addEventListener('input', (e) => {
       let v = e.target.value || '';
@@ -92,7 +90,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Carregar modalidades para o select
   async function carregarModalidades() {
     try {
       modalidades = await api.getModalidades() || [];
@@ -110,7 +107,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // Carregar planos
   async function carregarPlanos() {
     try {
       planos = await api.getPlanos() || [];
@@ -123,7 +119,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // Atualizar tabela
   function atualizarTabela() {
     if (!tableBody) return;
     tableBody.innerHTML = '';
@@ -159,7 +154,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Limpar formulário
   function limparForm() {
     if (selectModalidade) selectModalidade.value = '';
     if (inputValor) inputValor.value = '';
@@ -181,7 +175,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.body.classList.remove('modal-open');
   }
 
-  // Eventos
   btnNovo && btnNovo.addEventListener('click', () => {
     editId = null;
     formTitle.textContent = 'Novo Plano';
@@ -201,7 +194,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let temErro = false;
 
-    // Validações
     if (!descricao) {
       marcarErro(descPlano, true);
       temErro = true;
@@ -249,7 +241,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // Delegação para editar/excluir
   tableBody && tableBody.addEventListener('click', async (e) => {
     const btn = e.target.closest('button');
     if (!btn) return;
@@ -280,12 +271,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // Busca
   inputBusca && inputBusca.addEventListener('input', () => {
     atualizarTabela();
   });
 
-  // Inicializar
   await carregarModalidades();
   await carregarPlanos();
 });

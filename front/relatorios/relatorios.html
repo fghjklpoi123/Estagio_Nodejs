@@ -12,11 +12,8 @@
 </head>
 
 <body>
-
-  <!-- SIDEBAR (use a mesma que nas outras páginas) -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <!-- caminho da sua imagem enviada -->
       <img src="logo.png" alt="Logo">
       <span>Nome da Empresa</span>
     </div>
@@ -30,7 +27,6 @@
       <li><a href="../planoFront/planos-aluno.html" data-menu="meus-planos"><i class="fa-solid fa-ticket"></i> Meus Planos</a></li>
       <li><a href="../relatorios/relatorios.html" data-menu="relatorios"><i class="fa-solid fa-file"></i> Relatórios</a></li>
     </ul>  <ul class="menu-bottom">
-            <!--   <li><a href="config.html" data-menu="config"><i class="fa-solid fa-gear"></i> Configurações</a></li> -->
             <li><a href="../loginFront/logout.html" data-menu="sair"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
         </ul>
     </aside>
@@ -40,16 +36,12 @@
       <h1>Relatórios</h1>
 
       <div class="controls">
-        <!-- controles adicionais podem entrar aqui -->
+        
       </div>
     </div>
 
-    
-
-    <!-- Area dos relatórios -->
     <section class="report-grid">
 
-      <!-- Professores mais solicitados -->
       <div class="report-card" id="report-professores">
         <h3>Modalidades Populares (PDF)</h3>
         <div class="report-controls">
@@ -66,7 +58,6 @@
         </table>
       </div>
 
-      <!-- Alunos mais frequentes -->
       <div class="report-card" id="report-alunos">
         <h3>Alunos sem Modalidade (PDF)</h3>
         <div class="report-controls">
@@ -83,7 +74,6 @@
         </table>
       </div>
 
-      <!-- Horário de Pico -->
       <div class="report-card" id="report-pico">
         <h3>Alunos por Modalidade (PDF)</h3>
         <div class="report-controls">
@@ -99,16 +89,13 @@
           <tbody></tbody>
         </table>
       </div>
-
     </section>
 
   </main>
 
-  <!-- jsPDF + autotable (CDN) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.26/jspdf.plugin.autotable.min.js"></script>
-
-  <!-- Lógica -->
+  
   <script src="relatorios.js"></script>
 </body>
 

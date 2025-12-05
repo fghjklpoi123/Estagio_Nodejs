@@ -1,6 +1,5 @@
 import api from '/js/apiClient.js';
 
-// Alunos front — usa rotas exatas do backend (Option A)
 document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById('modalAluno');
   const btnNovo = document.getElementById('btnNovoAluno');
@@ -24,12 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const paginacao = document.getElementById('paginacao');
 
   let alunos = [];
-  let alunoEditando = null; // DB id when editing
+  let alunoEditando = null; 
 
   function escapeHtml(s){ if (s===undefined||s===null) return ''; return String(s).replace(/[&<>"']/g, (c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   function calcularIdade(d){ if(!d) return ''; const nasc=new Date(d); if(isNaN(nasc)) return ''; const hoje=new Date(); let i=hoje.getFullYear()-nasc.getFullYear(); if(hoje.getMonth()<nasc.getMonth()|| (hoje.getMonth()===nasc.getMonth()&&hoje.getDate()<nasc.getDate())) i--; return i; }
   
-  // CPF validation (verifica dígitos verificadores)
   function validarCPF(cpf) {
     cpf = String(cpf).replace(/\D/g, "");
     if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
@@ -45,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return resto === parseInt(cpf[10]);
   }
 
-  // Função para marcar erro em um campo
   function marcarErro(el, temErro) {
     if (!el) return;
     if (temErro) {
@@ -59,14 +56,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // CPF mask while typing (limit to 11 digits)
   cpfInput && cpfInput.addEventListener('input', ()=>{
     let v = cpfInput.value.replace(/\D/g,'');
     if (v.length > 11) v = v.slice(0,11);
     v = v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{2})$/,'$1-$2');
     cpfInput.value = v;
   });
-  // Telefone mask while typing
+  
   telefoneInput && telefoneInput.addEventListener('input', ()=>{
     let v = telefoneInput.value.replace(/\D/g,'');
     if (v.length > 10) v = v.slice(0,11);
@@ -92,18 +88,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const senha = senhaInput ? senhaInput.value.trim() : '';
     
     let temErro = false;
-    
-    // Marcar campos obrigatórios vazios
+
     if(!nome) { marcarErro(nomeInput, true); temErro = true; } else { marcarErro(nomeInput, false); }
     if(!email) { marcarErro(emailInput, true); temErro = true; } else { const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; if(!emailRe.test(String(email).toLowerCase())){ marcarErro(emailInput, true); temErro = true; } else { marcarErro(emailInput, false); } }
     if(!nasc) { marcarErro(nascInput, true); temErro = true; } else { marcarErro(nascInput, false); }
     if(!cpf) { marcarErro(cpfInput, true); temErro = true; } else { marcarErro(cpfInput, false); }
     if(!senha) { marcarErro(senhaInput, true); temErro = true; } else { marcarErro(senhaInput, false); }
-    
-    // Validação de CPF se preenchido
+ 
     if(cpf && !validarCPF(cpf)) { marcarErro(cpfInput, true); temErro = true; }
 
-    // Validação simples de telefone (se preenchido requer pelo menos 8 dígitos)
     if (telefone) {
       const digits = telefone.replace(/\D/g,'');
       if (digits.length < 8) { marcarErro(telefoneInput, true); temErro = true; }
@@ -159,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let paginaAtual=1, porPagina=6;
   function render(){ try{ lista.innerHTML=''; const termo=(busca&&busca.value)?busca.value.trim().toLowerCase():''; const sitVal=filtroSituacao?filtroSituacao.value:''; let filtrados = alunos.filter(a=> a.nome.toLowerCase().includes(termo) && (sitVal===''||a.situacao===sitVal)); const totalPaginas=Math.max(1,Math.ceil(filtrados.length/porPagina)); if(paginaAtual>totalPaginas) paginaAtual=totalPaginas; const inicio=(paginaAtual-1)*porPagina; const segmento=filtrados.slice(inicio,inicio+porPagina); segmento.forEach(a=>{ const realId=a.id; const card=document.createElement('div'); card.className='card'; card.innerHTML=`<button class="edit-btn" data-id="${realId}" title="Editar"><i class="fa-solid fa-pen"></i></button><button class="delete-btn" data-id="${realId}" title="Excluir"><i class="fa-solid fa-trash"></i></button><h3>${escapeHtml(a.nome)}</h3><span>Idade: ${escapeHtml(String(a.idade||calcularIdade(a.data_nascimento)))} anos</span><span>CPF: ${escapeHtml(a.cpf)}</span><span>Situação: ${escapeHtml(a.situacao)}</span>`; lista.appendChild(card); }); paginacao.innerHTML=''; for(let i=1;i<=Math.max(1,Math.ceil(filtrados.length/porPagina));i++){ const b=document.createElement('button'); b.textContent=i; if(i===paginaAtual) b.className='ativo'; b.addEventListener('click',()=>{ paginaAtual=i; render();}); paginacao.appendChild(b);} }catch(err){ console.error(err); lista.innerHTML='<p style="color:#c00;">Erro ao exibir alunos. Veja console.</p>'; } }
 
-  // After rendering basic cards, enrich each card with plan info and a link to modalidades page
   async function enrichCards(){
     try{
       const nodes = lista.querySelectorAll('.card');
@@ -178,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btnWrap.appendChild(link);
         node.appendChild(btnWrap);
 
-        // fetch plan and inscricoes
         try{
           const [plano, inscricoes] = await Promise.allSettled([api.getAlunoPlano(id), api.getAlunoModalidades(id)]);
           let textoPlano = 'Plano: Nenhum';
@@ -197,13 +188,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if(busca) busca.addEventListener('input',()=>{ paginaAtual=1; render(); }); if(filtroSituacao) filtroSituacao.addEventListener('change',()=>{ paginaAtual=1; render(); });
 
-  // Sincronização entre abas: quando modalidades mudam em outra aba
   window.addEventListener('modalidades:changed', () => {
     console.log('[alunos] modalidades:changed recebido');
     render();
   });
 
-  // Sincronização de storage: detecta mudanças em alunos de outra aba
   window.addEventListener('storage', (e) => {
     if (e.key === 'alunos') {
       alunos = JSON.parse(localStorage.getItem('alunos')) || [];
@@ -215,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   (async()=>{ try{ await carregarAlunos(); }catch(err){ console.error(err); } })();
 
-  // after initial load, enrich cards with plan info and link to modalidades
   const observer = new MutationObserver(()=>{ enrichCards(); });
   observer.observe(lista, { childList: true });
 

@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Elementos do formulário
   const form = document.getElementById('cadastroForm');
   const nomeInput = document.getElementById('nome');
   const emailInput = document.getElementById('email');
@@ -19,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Helper para escapar HTML
   function escapeHtml(s) {
     if (s === undefined || s === null) return '';
     return String(s).replace(/[&<>"']/g, (ch) => ({
@@ -27,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }[ch]));
   }
 
-  // Helper para marcar erro em campo
   function marcarErro(el, temErro) {
     if (!el) return;
     const label = document.querySelector(`label[for="${el.id}"]`);
@@ -40,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Helper para mostrar mensagem
   function showMensagem(tipo, texto) {
     mensagemEl.className = `mensagem ${tipo}`;
     mensagemEl.textContent = texto;
@@ -52,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // CPF mask enquanto digita
   cpfInput && cpfInput.addEventListener('input', () => {
     let v = cpfInput.value.replace(/\D/g, '');
     if (v.length > 11) v = v.slice(0, 11);
@@ -62,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
     else cpfInput.value = `${v.slice(0, 3)}.${v.slice(3, 6)}.${v.slice(6, 9)}-${v.slice(9)}`;
   });
 
-  // Telefone mask enquanto digita
   telefoneInput && telefoneInput.addEventListener('input', () => {
     let v = telefoneInput.value.replace(/\D/g, '');
     if (v.length > 11) v = v.slice(0, 11);
@@ -71,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
     else telefoneInput.value = `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7)}`;
   });
 
-  // CPF validation (verifica dígitos verificadores)
   function validarCPF(cpf) {
     cpf = String(cpf).replace(/\D/g, '');
     if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
@@ -87,11 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
     return resto === parseInt(cpf[10]);
   }
 
-  // Validação do formulário
   function validarFormulario() {
     let temErro = false;
 
-    // Nome
     if (!nomeInput.value.trim()) {
       marcarErro(nomeInput, true);
       temErro = true;
@@ -99,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
       marcarErro(nomeInput, false);
     }
 
-    // Email
     if (!emailInput.value.trim()) {
       marcarErro(emailInput, true);
       temErro = true;
@@ -107,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
       marcarErro(emailInput, false);
     }
 
-    // CPF
     const cpf = cpfInput.value.trim();
     if (!cpf) {
       marcarErro(cpfInput, true);
@@ -119,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
       marcarErro(cpfInput, false);
     }
 
-    // Senha
     if (!senhaInput.value || senhaInput.value.length < 6) {
       marcarErro(senhaInput, true);
       temErro = true;
@@ -127,7 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
       marcarErro(senhaInput, false);
     }
 
-    // Confirmar Senha
     if (senhaInput.value !== confirmaSenhaInput.value) {
       marcarErro(confirmaSenhaInput, true);
       temErro = true;
@@ -135,7 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
       marcarErro(confirmaSenhaInput, false);
     }
 
-    // Data de Nascimento
     if (!dataNascimentoInput.value) {
       marcarErro(dataNascimentoInput, true);
       temErro = true;
@@ -143,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
       marcarErro(dataNascimentoInput, false);
     }
 
-    // Sexo
     if (!sexoInput.value) {
       marcarErro(sexoInput, true);
       temErro = true;
@@ -154,7 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return !temErro;
   }
 
-  // Enviar formulário
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     console.log('Formulário enviado!');
@@ -187,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
       button.disabled = true;
       button.textContent = 'Criando conta...';
 
-      // Fazer requisição direto com fetch
       const res = await fetch('/api/alunos', {
         method: 'POST',
         headers: {

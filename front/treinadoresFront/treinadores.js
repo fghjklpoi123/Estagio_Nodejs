@@ -1,6 +1,5 @@
 import * as api from '/js/apiClient.js';
 
-// Treinadores front (usando backend APIs)
 document.addEventListener('DOMContentLoaded', ()=>{
   const modalBg = document.getElementById('modalTreinador');
   const btnNovo = document.getElementById('btnNovoTreinador');
@@ -28,7 +27,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   function marcarErro(el, temErro){ if(!el) return; if(temErro){ el.classList.add('erro'); el.style.borderColor='#c00'; el.style.backgroundColor='#ffe6e6'; } else { el.classList.remove('erro'); el.style.borderColor=''; el.style.backgroundColor=''; } }
 
-  // validar CPF (mesma lógica usada no CRUD de alunos)
   function validarCPF(cpf) {
     cpf = String(cpf).replace(/\D/g, '');
     if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
@@ -44,14 +42,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
     return resto === parseInt(cpf[10]);
   }
 
-  // mascara CPF (limita a 11 dígitos)
   cpfInput && cpfInput.addEventListener('input', ()=>{
     let v = cpfInput.value.replace(/\D/g,'');
     if (v.length > 11) v = v.slice(0,11);
     v = v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{2})$/,'$1-$2');
     cpfInput.value = v;
   });
-  // mascara telefone
+ 
   telInput && telInput.addEventListener('input', ()=>{ let v = telInput.value.replace(/\D/g,''); if (v.length > 11) v = v.slice(0,11); if (v.length <= 2) telInput.value = v; else if (v.length <= 6) telInput.value = `(${v.slice(0,2)}) ${v.slice(2)}`; else if (v.length <= 10) telInput.value = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`; else telInput.value = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7,11)}`; });
 
   btnNovo && btnNovo.addEventListener('click', ()=>{ editId = null; document.getElementById('tituloModalTreinador').innerText='Novo Treinador'; limpar(); modalBg.classList.add('active'); });
@@ -79,16 +76,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if(!cpf){ marcarErro(cpfInput, true); temErro = true; } else { marcarErro(cpfInput, false); }
     if(cpf && cpf.length !== 11){ marcarErro(cpfInput, true); temErro = true; } else if (cpf && !validarCPF(cpf)) { marcarErro(cpfInput, true); temErro = true; }
 
-    // telefone é obrigatório para treinador
     if(!tel){ marcarErro(telInput, true); temErro = true; } else { const digits = tel.replace(/\D/g,''); if(digits.length < 8){ marcarErro(telInput, true); temErro = true; } else marcarErro(telInput, false); }
 
-    // sexo obrigatório
     if(!sexo || !['M','F','O'].includes(sexo)){ if(sexoInput) marcarErro(sexoInput, true); temErro = true; } else if(sexoInput) marcarErro(sexoInput, false);
 
-    // data de nascimento obrigatória e válida
     if(!nasc || isNaN(Date.parse(nasc))){ if(nascInput) marcarErro(nascInput, true); temErro = true; } else if(nascInput) marcarErro(nascInput, false);
 
-    // senha obrigatória
     if(!senha) { marcarErro(senhaInput, true); temErro = true; } else { marcarErro(senhaInput, false); }
 
     if(temErro) return;
@@ -136,7 +129,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const porPagina = 6; let paginaAtual = 1; const totalPaginas = Math.max(1, Math.ceil(filtrados.length/porPagina)); if(paginaAtual>totalPaginas) paginaAtual=totalPaginas; const inicio=(paginaAtual-1)*porPagina; const segmento = filtrados.slice(inicio,inicio+porPagina);
     segmento.forEach(t=>{ const id = t.id || t._id || null; const card = document.createElement('div'); card.className='card'; card.innerHTML = `\n      <button class="edit-btn" data-id="${id}" title="Editar"><i class="fa-solid fa-pen"></i></button>\n      <button class="delete-btn" data-id="${id}" title="Excluir"><i class="fa-solid fa-trash"></i></button>\n      <h3>${escapeHtml(t.nome)}</h3>\n      <span>E-mail: ${escapeHtml(t.email||'')}</span>\n      <span>CPF: ${escapeHtml(t.cpf||'')}</span>\n      <span>Telefone: ${escapeHtml(t.telefone||'')}</span>\n      <span>Modalidade: ${escapeHtml(modalidadesMap[t.modalidade_id] || 'Nenhuma')}</span>\n    `; listaEl.appendChild(card); });
 
-    // pagination simple
+
     paginacaoEl.innerHTML=''; for(let p=1;p<=Math.max(1,Math.ceil(filtrados.length/porPagina));p++){ const b=document.createElement('button'); b.textContent=p; if(p===1) b.className='ativo'; b.addEventListener('click', ()=>{ paginaAtual=p; render(); }); paginacaoEl.appendChild(b); }
   }
 

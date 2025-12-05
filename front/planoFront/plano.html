@@ -11,7 +11,6 @@
 </head>
 <body>
 
-  <!-- SIDEBAR padrão -->
  <aside class="sidebar">
   <div class="sidebar-logo">
     <img src="logo.png" alt="Logo">
@@ -38,13 +37,10 @@
       <input type="text" id="buscarAluno" placeholder="Buscar Plano...">
       <div class="controls">
         <button class="btn-primary" id="btnNovo">+ Novo Plano</button>
-        <!-- Se quiser depois pode usar esse botão -->
-        <!-- <button class="btn-secondary" id="btnExportCsv">Exportar CSV</button> -->
       </div>
     </div>
 
-    <!-- FORMULÁRIO DE PLANO -->
-      <!-- MODAL DE PLANO -->
+  
    <section class="modal-overlay" id="formArea" aria-hidden="true">
   <div class="card form-card modal-card" role="dialog" aria-modal="true">
     <h3 id="formTitle"> Novo Plano</h3>
@@ -71,7 +67,6 @@
 </section>
 
 
-    <!-- LISTA DE PLANOS -->
     <section class="list-area">
       <div class="card">
         <h3>Planos Cadastrados</h3>
@@ -93,7 +88,6 @@
 
   </main>
 
-  <!-- Pode manter o nome aulas.js se quiser, o conteúdo abaixo já está para Planos -->
   <script type="module" src="plano-crud.js"></script>
 </body>
 </html>

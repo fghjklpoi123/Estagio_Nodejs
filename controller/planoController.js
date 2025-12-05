@@ -71,12 +71,10 @@ exports.atualizar = async (req, res) => {
             return res.status(400).json({ erro: 'ID inválido' });
         }
 
-        // Validar que pelo menos um campo foi enviado
         if (!descricao && !preco && modalidade_id === undefined) {
             return res.status(400).json({ erro: 'Nenhum dado para atualizar' });
         }
 
-        // Validar campos se fornecidos
         if (descricao && descricao.trim() === '') {
             return res.status(400).json({ erro: 'Descrição não pode estar vazia' });
         }
@@ -128,7 +126,7 @@ exports.deletar = async (req, res) => {
 exports.assinar = async (req, res) => {
     try {
         const { planoId } = req.params;
-        const alunoId = req.alunoId; // Obtido do middleware de autenticação
+        const alunoId = req.alunoId; 
 
         if (!planoId || isNaN(planoId)) {
             return res.status(400).json({ erro: 'planoId inválido' });
@@ -136,7 +134,6 @@ exports.assinar = async (req, res) => {
 
         const resultado = await assinarPlano(alunoId, Number(planoId));
 
-        // Retornar com status apropriado
         const httpStatus = resultado.status || 500;
         return res.status(httpStatus).json(resultado);
 

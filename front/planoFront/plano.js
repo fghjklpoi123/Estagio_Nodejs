@@ -1,7 +1,6 @@
-// aulas.js - Gestão de Planos (modalidade, valor, descrição) com validação visual
 document.addEventListener('DOMContentLoaded', () => {
 
-  // elementos
+ 
   const btnNovo = document.getElementById('btnNovo');
   const btnSalvar = document.getElementById('btnSalvar');
   const btnCancelar = document.getElementById('btnCancelar');
@@ -13,12 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const tableBody = document.querySelector('#tablePlanos tbody');
   const formArea = document.getElementById('formArea');
   const formTitle = document.getElementById('formTitle');
-  const inputBusca = document.getElementById('buscarAluno'); // input de busca de planos
+  const inputBusca = document.getElementById('buscarAluno'); 
 
   let planos = JSON.parse(localStorage.getItem('planos')) || [];
   let editIndex = null;
-
-  /* ---------- HELPERS ---------- */
 
   function escapeHtml(s) {
     if (s === undefined || s === null) return '';
@@ -39,14 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function formatarParaPtBr(valorNum) {
     if (valorNum === null || valorNum === undefined || valorNum === '') return '';
     const n = Number(valorNum) || 0;
-    // formata com 2 casas e vírgula
     return n.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   }
 
   function parseValorBr(str) {
     if (str === null || str === undefined || str === '') return 0;
     let s = String(str).trim();
-    // remove espaços, pontos de milhar e transforma vírgula em ponto
     s = s.replace(/\s/g, '').replace(/\./g, '').replace(/,/g, '.');
     const n = parseFloat(s);
     return isNaN(n) ? 0 : n;
@@ -73,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  /* ---------- TEXTAREA AUTO-RESIZE ---------- */
   function ajustarAlturaTextarea(el) {
     if (!el) return;
     el.style.height = 'auto';
@@ -84,17 +78,14 @@ document.addEventListener('DOMContentLoaded', () => {
     ajustarAlturaTextarea(descPlano);
   }
 
-  /* ---------- INPUT VALOR: EDIÇÃO LIVRE + FORMATA NO BLUR (limite 999,99) ---------- */
+
   if (inputValor) {
-    // enquanto digita: aceita apenas dígitos e uma vírgula; não insere zeros automaticamente
+ 
     inputValor.addEventListener('input', (e) => {
       let v = e.target.value || '';
-      // mantém apenas dígitos e vírgula
       v = v.replace(/[^\d,]/g, '');
-      // se tiver mais de uma vírgula, mantém só a primeira
       const parts = v.split(',');
       if (parts.length > 2) v = parts.shift() + ',' + parts.join('');
-      // limita parte inteira a 3 dígitos e decimais a 2
       if (v.includes(',')) {
         const [intPart, decPart] = v.split(',');
         const intClean = intPart.slice(0, 3);
@@ -105,35 +96,30 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // ao focar: apenas garante vírgulas em vez de pontos (mais natural para pt-BR)
     inputValor.addEventListener('focus', (e) => {
       if (!e.target.value) return;
       e.target.value = String(e.target.value).replace(/\./g, ',');
     });
 
-    // ao perder foco: normaliza, limita até 999.99 e formata com duas casas
     inputValor.addEventListener('blur', (e) => {
       let raw = (e.target.value || '').trim();
       if (raw === '') { e.target.value = ''; return; }
-      raw = raw.replace(/\s/g, '').replace(/\./g, '').replace(/,/g, '.'); // pra parse
+      raw = raw.replace(/\s/g, '').replace(/\./g, '').replace(/,/g, '.'); 
       let num = parseFloat(raw);
       if (isNaN(num)) { e.target.value = ''; return; }
       if (num > 999.99) num = 999.99;
       e.target.value = num.toFixed(2).replace('.', ',');
     });
 
-    // colar: normaliza conteúdo e dispara blur para formatar/validar
     inputValor.addEventListener('paste', (e) => {
       e.preventDefault();
       const text = (e.clipboardData || window.clipboardData).getData('text') || '';
       const cleaned = text.replace(/[^\d,\.]/g, '').replace(/\./g, ',');
-      inputValor.value = cleaned;
-      // formata:
+      inputValor.value = cleaned; 
       inputValor.dispatchEvent(new Event('blur', { bubbles: true }));
     });
   }
 
-  /* ---------- MODAL OPEN/CLOSE ---------- */
   function abrirModal() {
     if (!formArea) return;
     formArea.classList.add('show');
@@ -148,7 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.remove('modal-open');
   }
 
-  /* ---------- CARREGAR MODALIDADES ---------- */
   function carregarSelects() {
     const modalidades = readJSON('modalidades');
     if (selectModalidade) {
@@ -161,7 +146,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   carregarSelects();
 
-  /* ---------- BOTÕES ---------- */
   btnNovo && btnNovo.addEventListener('click', () => {
     editIndex = null;
     formTitle.textContent = 'Novo Plano';
@@ -174,7 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
     fecharModal();
   });
 
-  /* ---------- SALVAR (VALIDAÇÃO VISUAL) ---------- */
   btnSalvar && btnSalvar.addEventListener('click', () => {
     const modalidade = selectModalidade ? selectModalidade.value.trim() : '';
     const valorStr = inputValor ? inputValor.value.trim() : '';
@@ -193,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!val) { marcarErro(el, true); temErro = true; } else { marcarErro(el, false); }
     });
 
-    // valida numericamente o valor
     if (valorStr) {
       const valorNum = parseValorBr(valorStr);
       if (isNaN(valorNum) || valorNum < 0) { marcarErro(inputValor, true); temErro = true; }
@@ -223,7 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ajustarAlturaTextarea(descPlano);
   }
 
-  /* ---------- TABELA ---------- */
   function atualizarTabela() {
     if (!tableBody) return;
     tableBody.innerHTML = '';
@@ -246,7 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const realIndex = planos.indexOf(p);
       const tr = document.createElement('tr');
 
-      // build row with actions centered
       tr.innerHTML = `
         <td>${escapeHtml(p.modalidade)}</td>
         <td style="white-space:nowrap;">${formatarParaPtBr(p.valor)}</td>
@@ -259,7 +239,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // delegação para editar/excluir
   tableBody && tableBody.addEventListener('click', (e) => {
     const btn = e.target.closest('button');
     if (!btn) return;
@@ -294,7 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
     atualizarTabela();
   }
 
-  /* ---------- EXPORT CSV (opcional) ---------- */
   const btnExportCsv = document.getElementById('btnExportCsv');
   btnExportCsv && btnExportCsv.addEventListener('click', () => {
     if (!planos.length) { alert('Nenhum plano para exportar.'); return; }
@@ -308,7 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   });
 
-  /* ---------- LISTENERS GERAIS ---------- */
   inputBusca && inputBusca.addEventListener('input', atualizarTabela);
 
   window.addEventListener('storage', (e) => {
@@ -321,8 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   formArea && formArea.addEventListener('click', (e) => { if (e.target === formArea) fecharModal(); });
 
-  /* ---------- INICIAR ---------- */
   atualizarTabela();
   carregarSelects();
 
-}); // fim DOMContentLoaded
+}); 

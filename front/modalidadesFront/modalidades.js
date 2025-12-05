@@ -1,16 +1,11 @@
 import api from '/js/apiClient.js';
 
-// Modalidades front — comportamento:
-// - se URL contém ?alunoId=NN => mostra a tela de aluno para inscrição/cancelamento
-// - caso contrário, mantém comportamento administrativo básico (listagem apenas)
-
 function qs(name) { const url = new URL(location.href); return url.searchParams.get(name); }
 const alunoId = qs('alunoId');
 
 const listaModalidadesEl = document.getElementById('listaModalidades');
 const buscarModalidadeInput = document.getElementById('buscarModalidade');
 
-// simple marcarErro used across fronts
 function marcarErro(el, temErro) {
   if (!el) return;
   if (temErro) {
@@ -26,7 +21,6 @@ function marcarErro(el, temErro) {
 
 function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-// Student view
 if (alunoId) {
   (async function studentView(){
     try {
@@ -36,12 +30,10 @@ if (alunoId) {
         api.getAlunoPlano(alunoId).catch(()=>null)
       ]);
 
-      // map of modalidade ids the aluno is enrolled in
       const inscritosIds = new Set((inscricoes || []).map(m => m.id));
 
       function remaining() {
         if (!plano) return null;
-        // assume backend returns { limite } or similar
         return (plano.limite == null) ? null : Math.max(0, plano.limite - (inscricoes || []).length);
       }
 
@@ -58,7 +50,6 @@ if (alunoId) {
           listaModalidadesEl.appendChild(card);
         });
 
-        // show plan info
         const info = document.createElement('div');
         info.style.marginTop = '12px';
         let planText = 'Plano: ' + (plano ? (plano.descricao || '—') : 'Nenhum');
@@ -71,8 +62,7 @@ if (alunoId) {
       listaModalidadesEl.addEventListener('click', async (ev)=>{
         const btn = ev.target.closest('button'); if(!btn) return; const id = btn.dataset.id;
         if(btn.classList.contains('join-btn')){
-          btn.disabled = true; try{ const res = await api.inscreverAluno(alunoId, Number(id)); alert(res.mensagem || 'Inscrito com sucesso'); // backend returns mensagem
-            // refresh
+          btn.disabled = true; try{ const res = await api.inscreverAluno(alunoId, Number(id)); alert(res.mensagem || 'Inscrito com sucesso'); 
             const ins = await api.getAlunoModalidades(alunoId); ins.forEach(x=>inscritosIds.add(x.id)); render();
           }catch(err){ console.error(err); alert('Erro ao inscrever: '+err.message); } finally{ btn.disabled=false; }
         } else if(btn.classList.contains('cancel-btn')){
@@ -89,7 +79,6 @@ if (alunoId) {
   })();
 
 } else {
-  // Admin view with CRUD using backend endpoints
   (async function adminView(){
     const modalModalidade = document.getElementById('modalModalidade');
     const btnNovaModalidade = document.getElementById('btnNovaModalidade');
@@ -133,7 +122,6 @@ if (alunoId) {
 
     btnFecharModal && btnFecharModal.addEventListener('click', ()=>{ modalModalidade.classList.remove('active'); });
 
-    // salvar (criar/editar)
     btnSalvarModalidade && btnSalvarModalidade.addEventListener('click', async ()=>{
       const nome = nomeModalidadeInput.value.trim(); const desc = descModalidadeInput.value.trim();
       if(!nome){ marcarErro(nomeModalidadeInput, true); alert('Informe o nome da modalidade.'); return; }
@@ -146,7 +134,6 @@ if (alunoId) {
       }catch(err){ console.error(err); alert('Erro ao salvar modalidade: '+(err.message||err)); }
     });
 
-    // delegação para editar/excluir
     listaModalidadesEl.addEventListener('click', async (ev)=>{
       const btn = ev.target.closest('button'); if(!btn) return; const id = btn.dataset.id ? Number(btn.dataset.id) : null;
       if(btn.classList.contains('edit-btn')){
@@ -158,7 +145,6 @@ if (alunoId) {
 
     buscarModalidadeInput && buscarModalidadeInput.addEventListener('input', ()=>renderList());
 
-    // initial load
     await load();
   })();
 }

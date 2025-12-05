@@ -9,7 +9,6 @@ const planoSchema = `CREATE TABLE IF NOT EXISTS planos (
     FOREIGN KEY (modalidade_id) REFERENCES modalidades(id) ON DELETE SET NULL
 );`;
 
-// criar tabela se não existir
 db.query(planoSchema, (err) => {
     if (err) console.error('Erro criando tabela planos:', err);
 });

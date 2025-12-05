@@ -3,6 +3,21 @@ const { listarModalidadesPorAluno } = require('../model/alunoModalidade');
 const { buscarPlanosPorModalidade } = require('../model/plano');
 const { buscarUltimaInscricaoPorAluno } = require('../model/alunoModalidade');
 
+function validarCPF(cpf) {
+    cpf = String(cpf).replace(/\D/g, '');
+    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+    let soma = 0, resto;
+    for (let i = 1; i <= 9; i++) soma += parseInt(cpf[i - 1]) * (11 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(cpf[9])) return false;
+    soma = 0;
+    for (let i = 1; i <= 10; i++) soma += parseInt(cpf[i - 1]) * (12 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    return resto === parseInt(cpf[10]);
+}
+
 exports.listar = async (req, res) => {
     let result = await listarAlunos()
     res.json(result);
@@ -29,7 +44,7 @@ exports.inserir = async (req, res) => {
 
         const cpfDigits = String(cpf).replace(/\D/g, '');
         if (cpfDigits.length !== 11) return res.status(400).json({ error: 'CPF deve ter 11 dígitos' });
-        // normalize to digits-only for storage
+        if (!validarCPF(cpfDigits)) return res.status(400).json({ error: 'CPF inválido' });
         req.body.cpf = cpfDigits;
 
         if (sexo !== 'M' && sexo !== 'F' && sexo !== 'O') {
@@ -47,7 +62,6 @@ exports.inserir = async (req, res) => {
         if (!email || email.trim() === '') {
             return res.status(400).json({ error: 'Email obrigatorio' });
         }
-        // simple email format validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(String(email).toLowerCase())) return res.status(400).json({ error: 'Email invalido' });
 
@@ -86,6 +100,9 @@ exports.update = async (req, res) => {
             const cpfNormalized = String(dados.cpf).replace(/\D/g, '');
             if (cpfNormalized.length !== 11) {
                 return res.status(400).json({ error: 'CPF deve ter 11 dígitos' });
+            }
+            if (!validarCPF(cpfNormalized)) {
+                return res.status(400).json({ error: 'CPF inválido' });
             }
             dados.cpf = cpfNormalized;
         }
@@ -142,24 +159,20 @@ exports.remove = async (req, res) => {
     }
 }
 
-// GET /api/alunos/:id/plano
 exports.getPlano = async (req, res) => {
     try {
         const { id } = req.params;
         if (!id || isNaN(id)) return res.status(400).json({ erro: 'ID inválido' });
 
-        // buscar a última inscrição do aluno
         const ultima = await buscarUltimaInscricaoPorAluno(id);
         if (!ultima) {
             return res.status(200).json(null);
         }
 
         const modalidadeId = ultima.modalidade_id;
-        // buscar planos para essa modalidade
         const planos = await buscarPlanosPorModalidade(modalidadeId) || [];
         if (!planos.length) return res.status(200).json(null);
 
-        // escolher o plano mais recente (por created_at se disponível)
         planos.sort((a,b)=>{
             const ta = new Date(a.created_at || a.createdAt || 0).getTime();
             const tb = new Date(b.created_at || b.createdAt || 0).getTime();

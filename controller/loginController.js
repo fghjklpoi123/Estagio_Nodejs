@@ -1,12 +1,8 @@
-// Controller de login - autentica aluno ou professor
 const { buscarAlunoPorId } = require('../model/aluno');
 const { buscarProfessorPorId } = require('../model/professor');
 const db = require('../db');
 
-// Simulação simples de verificação de senha (em produção usar bcrypt)
 function verificarSenha(senhaEnviada, senhaArmazenada) {
-    // TODO: Em produção, usar bcrypt.compare(senhaEnviada, senhaArmazenada)
-    // Por enquanto, comparação simples
     return senhaEnviada === senhaArmazenada;
 }
 
@@ -21,7 +17,6 @@ exports.loginAluno = async (req, res) => {
             return res.status(400).json({ erro: 'Senha obrigatória' });
         }
 
-        // Buscar aluno por email
         const sql = 'SELECT * FROM alunos WHERE email = ?';
         db.query(sql, [email], (err, results) => {
             if (err) {
@@ -35,12 +30,10 @@ exports.loginAluno = async (req, res) => {
 
             const aluno = results[0];
 
-            // Verificar senha
             if (!verificarSenha(senha, aluno.senha)) {
                 return res.status(401).json({ erro: 'Email ou senha inválidos' });
             }
 
-            // Login bem-sucedido
             return res.json({
                 mensagem: 'Login bem-sucedido',
                 aluno: {
@@ -69,7 +62,6 @@ exports.loginProfessor = async (req, res) => {
             return res.status(400).json({ erro: 'Senha obrigatória' });
         }
 
-        // Buscar professor por email
         const sql = 'SELECT * FROM professores WHERE email = ?';
         db.query(sql, [email], (err, results) => {
             if (err) {
@@ -83,12 +75,10 @@ exports.loginProfessor = async (req, res) => {
 
             const professor = results[0];
 
-            // Verificar senha
             if (!verificarSenha(senha, professor.senha)) {
                 return res.status(401).json({ erro: 'Email ou senha inválidos' });
             }
 
-            // Login bem-sucedido
             return res.json({
                 mensagem: 'Login bem-sucedido',
                 professor: {
@@ -107,7 +97,5 @@ exports.loginProfessor = async (req, res) => {
 };
 
 exports.logout = (req, res) => {
-    // No caso de token, seria desvalidado no backend
-    // Por simplicidade (sem token real), retorna confirmação
     res.json({ mensagem: 'Logout realizado com sucesso' });
 };
