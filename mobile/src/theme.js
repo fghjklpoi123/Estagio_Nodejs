@@ -18,6 +18,13 @@ export const colors = {
   sucessoBg: '#d4edda',
   sucessoTexto: '#155724',
   sucessoBorda: '#c3e6cb',
+  deleteBtn: '#d9534f',
+  btnSecondaryBg: '#e9ecef',
+  btnSecondaryTexto: '#333333',
+  planoPreco: '#2ecc71',
+  assinarBtn: '#3498db',
+  infoBg: '#d1ecf1',
+  infoTexto: '#0c5460',
 };
 
 export const radius = {

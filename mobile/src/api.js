@@ -56,3 +56,44 @@ export const loginAluno = (email, senha) =>
 
 export const loginProfessor = (email, senha) =>
   request('/login/professor', { method: 'POST', body: JSON.stringify({ email, senha }) });
+
+export const cadastrarAluno = (dados) =>
+  request('/alunos', { method: 'POST', body: JSON.stringify(dados) });
+
+export const getAlunos = () => request('/alunos');
+export const getAluno = (id) => request(`/alunos/${id}`);
+export const createAluno = (dados) => request('/alunos', { method: 'POST', body: JSON.stringify(dados) });
+export const updateAluno = (id, dados) => request(`/alunos/${id}`, { method: 'PUT', body: JSON.stringify(dados) });
+export const deleteAluno = (id) => request(`/alunos/${id}`, { method: 'DELETE' });
+
+export const getAlunoPlano = (id) => request(`/alunos/${id}/plano`);
+export const putAlunoPlano = (id, planoBody) => request(`/alunos/${id}/plano`, { method: 'PUT', body: JSON.stringify(planoBody) });
+export const getAlunoModalidades = (id) => request(`/alunos/${id}/modalidades`);
+
+export const getModalidades = () => request('/modalidades');
+export const createModalidade = (dados) => request('/modalidades', { method: 'POST', body: JSON.stringify(dados) });
+export const updateModalidade = (id, dados) => request(`/modalidades/${id}`, { method: 'PUT', body: JSON.stringify(dados) });
+export const deleteModalidade = (id) => request(`/modalidades/${id}`, { method: 'DELETE' });
+
+export const getProfessores = () => request('/professores');
+export const getProfessor = (id) => request(`/professores/${id}`);
+export const createProfessor = (dados) => request('/professores', { method: 'POST', body: JSON.stringify(dados) });
+export const updateProfessor = (id, dados) => request(`/professores/${id}`, { method: 'PUT', body: JSON.stringify(dados) });
+export const deleteProfessor = (id) => request(`/professores/${id}`, { method: 'DELETE' });
+
+export const getPlanos = () => request('/planos');
+export const getPlano = (id) => request(`/planos/${id}`);
+export const createPlano = (dados) => request('/planos', { method: 'POST', body: JSON.stringify(dados) });
+export const updatePlano = (id, dados) => request(`/planos/${id}`, { method: 'PUT', body: JSON.stringify(dados) });
+export const deletePlano = (id) => request(`/planos/${id}`, { method: 'DELETE' });
+export const assinarPlano = (planoId, alunoId) =>
+  request(`/planos/${planoId}/assinar`, { method: 'POST', headers: { 'X-Aluno-Id': String(alunoId) }, body: JSON.stringify({}) });
+
+export const inscreverAluno = (alunoId, modalidadeId) =>
+  request('/aluno-modalidade/vincular', { method: 'POST', body: JSON.stringify({ alunoId, modalidadeId }) });
+export const cancelarInscricao = (alunoId, modalidadeId) =>
+  request(`/aluno-modalidade/${alunoId}/${modalidadeId}`, { method: 'DELETE' });
+
+export const getRelatorioModalidadesPopulares = () => request('/relatorios/modalidades-populares');
+export const getRelatorioAlunosSemModalidade = () => request('/relatorios/alunos-sem-modalidade');
+export const getRelatorioAlunosPorModalidade = () => request('/relatorios/alunos-por-modalidade');
