@@ -1,14 +1,6 @@
 *{ box-sizing: border-box; margin:0; padding:0; font-family: Inter, Arial, sans-serif; }
 
-:root{
-  --blue-600: #0f4fa8;
-  --blue-700: #0b3b7e;
-  --muted: #6d7b8c;
-  --card-bg: #ffffff;
-  --page-bg: #f3f6fb;
-}
-
-html,body { height:100%; background: var(--page-bg); }
+html,body { height:100%; background: var(--page-bg); color: var(--text); }
 
 .login-wrapper {
   min-height:100vh;
@@ -82,7 +74,7 @@ html,body { height:100%; background: var(--page-bg); }
   border: 1px solid #c3e6cb;
 }
 
-label{ font-weight:600; color:#233142; font-size:0.9rem; }
+label{ font-weight:600; color:var(--text); font-size:0.9rem; }
 input {
   padding:12px 14px;
   border-radius: 10px;

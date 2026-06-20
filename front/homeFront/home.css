@@ -6,10 +6,11 @@
 }
 
 body {
-    background: #f3f6fb;
+    background: var(--page-bg);
     display: flex;
     min-height: 100vh;
     overflow-x: hidden;
+    color: var(--text);
 }
 
 .menu {
@@ -22,7 +23,7 @@ body {
 
 .menu li a {
     text-decoration: none;
-    color: #dce7ff;
+    color: var(--sidebar-text);
     font-size: 1rem;
     padding: 10px;
     border-radius: 8px;
@@ -49,18 +50,18 @@ body {
 
 .content h1 {
     font-size: 2.4rem;
-    color: #1e2a3b;
+    color: var(--text);
     margin-bottom: 10px;
 }
 
 .content p {
-    color: #6d7b8c;
+    color: var(--text-soft);
     margin-bottom: 35px;
     font-size: 1.1rem;
 }
 
 .main-card {
-    background: #fff;
+    background: var(--card-bg);
     padding: 40px;
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
@@ -76,7 +77,7 @@ body {
 
 .main-card h2 {
     font-size: 2rem;
-    color: #1e2a3b;
+    color: var(--text);
 }
 
 .stats {
@@ -85,7 +86,7 @@ body {
 }
 
 .stat-card {
-    background: #fff;
+    background: var(--card-bg);
     padding: 25px;
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
@@ -95,11 +96,11 @@ body {
 
 .stat-card h3 {
     font-size: 2rem;
-    color: #1e2a3b;
+    color: var(--text);
 }
 
 .stat-card span {
-    color: #6d7b8c;
+    color: var(--text-soft);
     font-size: 0.95rem;
 }
 
@@ -109,7 +110,7 @@ body {
   position: fixed;
   left: 0;
   top: 0;
-  background: linear-gradient(180deg, #0b3b7e, #0f4fa8);
+  background: var(--sidebar-gradient);
   color: #fff;
   padding: 25px 20px;
   display: flex;
@@ -137,7 +138,7 @@ body {
   padding: 4px;
 }
 .sidebar-logo span {
-  color: #e8f1ff;
+  color: var(--sidebar-text);
   font-weight: 700;
 }
 
@@ -155,7 +156,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #dce7ff;
+  color: var(--sidebar-text);
   text-decoration: none;
   padding: 10px 12px;
   border-radius: 8px;

@@ -1,0 +1,91 @@
+/* theme.css
+   Define as variáveis de cor do sistema (tema claro = padrão, tema escuro = opcional).
+   Inclua este arquivo em TODAS as páginas, depois do CSS específico de cada uma,
+   e troque cores fixas (#fff, #1e2a3b, etc.) por var(--page-bg), var(--text), etc.
+*/
+
+:root {
+  --blue-600: #0f4fa8;
+  --blue-700: #0b3b7e;
+  --muted: #6d7b8c;
+  --card-bg: #ffffff;
+  --page-bg: #f3f6fb;
+  --text: #1e2a3b;
+  --text-soft: #6d7b8c;
+  --border-color: #e0e6ef;
+  --error-bg: #f8d7da;
+  --error-color: #721c24;
+  --success-bg: #d4edda;
+  --success-color: #155724;
+  --shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  --sidebar-gradient: linear-gradient(180deg, #0b3b7e, #0f4fa8);
+  --sidebar-text: #dce7ff;
+  --input-bg: #ffffff;
+  --subtle-bg: #cccccc;
+}
+
+[data-theme="dark"] {
+  --blue-600: #3a7bd5;
+  --blue-700: #2c5fa8;
+  --muted: #9aa7b8;
+  --card-bg: #1c2333;
+  --page-bg: #11151f;
+  --text: #e8edf5;
+  --text-soft: #a9b4c4;
+  --border-color: #2c3548;
+  --error-bg: #4a1f24;
+  --error-color: #f5b3ba;
+  --success-bg: #1f3d28;
+  --success-color: #9fe3b0;
+  --shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --sidebar-gradient: linear-gradient(180deg, #0a1730, #0f2147);
+  --sidebar-text: #c9d6f0;
+  --input-bg: #232b3e;
+  --subtle-bg: #2c3548;
+}
+
+/* Transição suave ao trocar de tema */
+body, .sidebar, .main-card, .stat-card, .login-card, .cadastro-card,
+input, select, textarea, table, .content {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Botão de alternância de tema (usado na sidebar) */
+[data-theme-toggle] {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--sidebar-text);
+  font-size: 1rem;
+  padding: 10px 12px;
+  border-radius: 8px;
+  transition: background 0.12s, transform 0.08s;
+  font-family: inherit;
+}
+
+[data-theme-toggle]:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateX(3px);
+}
+
+[data-theme-toggle] i {
+  width: 20px;
+  text-align: center;
+}
+
+/* Garante que campos de formulário acompanhem o tema em todas as páginas,
+   mesmo que o CSS de cada página não defina background/color explicitamente. */
+input, select, textarea {
+  background: var(--input-bg);
+  color: var(--text);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-soft);
+  opacity: 0.8;
+}
+

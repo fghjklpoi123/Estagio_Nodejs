@@ -1,4 +1,3 @@
-```html id="f4n8qy"
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -10,11 +9,10 @@
 
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/theme.css">
 </head>
 
 <body>
-
-    <!-- SIDEBAR -->
 
      <aside class="sidebar">
   <div class="sidebar-logo">
@@ -30,11 +28,12 @@
     <li><a href="../planoFront/plano.html" data-menu="planos"><i class="fa-solid fa-list"></i> Planos (Admin)</a></li>
     <li><a href="../planoFront/planos-aluno.html" data-menu="meus-planos"><i class="fa-solid fa-ticket"></i> Meus Planos</a></li>
     <li><a href="../relatorios/relatorios.html" data-menu="relatorios"><i class="fa-solid fa-file"></i> Relatórios</a></li>
-    <li><a href="../treinosFront/treinos.html" data-menu="treinos"><i class="fa-solid fa-file"></i> Treinos</a></li>
+    <li><a href="../treinos/treinos.html" data-menu="treinos"><i class="fa-solid fa-file"></i> Treinos</a></li>
     <li><a href="../calendarioFront/calendario.html" data-menu="calendario"><i class="fa-solid fa-calendar"></i> Calendário</a></li>
   </ul>
 
   <ul class="menu-bottom">
+   <li><button type="button" data-theme-toggle><i class="fa-solid fa-moon"></i> <span>Modo escuro</span></button></li>
    <li><a href="../loginFront/logout.html" data-menu="sair"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
   </ul>
 </aside>
@@ -73,13 +72,9 @@
 
 </div>
 
-        <!-- LISTA DE EVENTOS -->
-
         <section class="lista" id="listaEventos"></section>
 
     </main>
-
-    <!-- MODAL -->
 
     <div class="modal-bg" id="modalEvento">
 
@@ -117,8 +112,8 @@
 
     <!-- JS -->
 
+    <script src="/js/theme.js"></script>
     <script src="calendario.js"></script>
 
 </body>
 </html>
-```

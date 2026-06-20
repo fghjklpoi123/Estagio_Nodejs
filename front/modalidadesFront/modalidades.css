@@ -1,13 +1,14 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial; }
 
 body {
-    background: #f3f6fb;
+    background: var(--page-bg);
     display: flex;
+    color: var(--text);
 }
 
 .sidebar {
     width: 260px;
-    background: linear-gradient(180deg, #0b3b7e, #0f4fa8);
+    background: var(--sidebar-gradient);
     padding: 25px 20px;
     position: fixed; top: 0; bottom: 0; left: 0;
     color: #fff;
@@ -21,7 +22,7 @@ body {
 
 .menu, .menu-bottom { list-style: none; margin-top: 20px; }
 .menu a, .menu-bottom a {
-    color: #dce7ff; text-decoration: none; padding: 10px;
+    color: var(--sidebar-text); text-decoration: none; padding: 10px;
     display: flex; align-items: center; gap: 12px; border-radius: 8px;
 }
 .menu a:hover, .active { background: rgba(255,255,255,0.15); }
@@ -41,18 +42,18 @@ body {
 .filters select, .filters input {
     padding: 10px;
     border-radius: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
 }
 
 
 .btn-primary {
-    background: #0f4fa8; color: white; padding: 12px 20px;
+    background: var(--blue-600); color: white; padding: 12px 20px;
     border: none; border-radius: 8px; cursor: pointer;
 }
-.btn-primary:hover { background: #0b3b7e; }
+.btn-primary:hover { background: var(--blue-700); }
 
 .btn-secondary {
-    background: #ccc; padding: 10px; border-radius: 8px; border: none;
+    background: var(--subtle-bg); padding: 10px; border-radius: 8px; border: none;
 }
 
 
@@ -63,33 +64,33 @@ body {
 }
 
 .card {
-    background: white; padding: 20px; border-radius: 14px;
+    background: var(--card-bg); padding: 20px; border-radius: 14px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     position: relative;
 }
 
 .card h3 { font-size: 1.3rem; margin-bottom: 5px; }
-.card span { color: #6d7b8c; font-size: 0.9rem; display: block; }
+.card span { color: var(--text-soft); font-size: 0.9rem; display: block; }
 
 
 .card { padding-top: 50px; }
 .card h3 { margin-top: 8px; margin-bottom: 8px; }
-.card p { color: #6d7b8c; margin-bottom: 8px; }
+.card p { color: var(--text-soft); margin-bottom: 8px; }
 
 
 .edit-btn, .delete-btn {
     position: absolute; top: 15px; background: none; border: none; cursor: pointer;
 }
-.edit-btn { right: 45px; color: #0f4fa8; font-size: 1.1rem; }
+.edit-btn { right: 45px; color: var(--blue-600); font-size: 1.1rem; }
 .delete-btn { right: 15px; color: #d9534f; font-size: 1.1rem; }
 
 
 .paginacao { text-align: center; margin-top: 25px; }
 .paginacao button {
     padding: 8px 14px; margin: 3px;
-    background: #0f4fa8; color: white; border: none; border-radius: 6px;
+    background: var(--blue-600); color: white; border: none; border-radius: 6px;
 }
-.paginacao .ativo { background: #0b3b7e; }
+.paginacao .ativo { background: var(--blue-700); }
 
 
 .modal-bg {
@@ -99,12 +100,12 @@ body {
 .modal-bg.active { display: flex; }
 
 .modal {
-    background: white; padding: 25px; width: 380px; border-radius: 12px;
+    background: var(--card-bg); padding: 25px; width: 380px; border-radius: 12px;
 }
 
 .modal input, .modal select, .modal textarea {
     width: 100%; padding: 12px; border-radius: 8px;
-    border: 1px solid #ccc; margin-bottom: 15px;
+    border: 1px solid var(--border-color); margin-bottom: 15px;
 }
 
 textarea { height: 80px; }
@@ -115,7 +116,7 @@ textarea { height: 80px; }
   position: fixed;
   left: 0;
   top: 0;
-  background: linear-gradient(180deg, #0b3b7e, #0f4fa8);
+  background: var(--sidebar-gradient);
   color: #fff;
   padding: 25px 20px;
   display: flex;
@@ -143,7 +144,7 @@ textarea { height: 80px; }
   padding: 4px;
 }
 .sidebar-logo span {
-  color: #e8f1ff;
+  color: var(--sidebar-text);
   font-weight: 700;
 }
 
@@ -161,7 +162,7 @@ textarea { height: 80px; }
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #dce7ff;
+  color: var(--sidebar-text);
   text-decoration: none;
   padding: 10px 12px;
   border-radius: 8px;

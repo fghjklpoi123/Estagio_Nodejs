@@ -5,22 +5,10 @@
   font-family: Inter, Arial, sans-serif;
 }
 
-:root {
-  --blue-600: #0f4fa8;
-  --blue-700: #0b3b7e;
-  --muted: #6d7b8c;
-  --card-bg: #ffffff;
-  --page-bg: #f3f6fb;
-  --error-bg: #f8d7da;
-  --error-color: #721c24;
-  --success-bg: #d4edda;
-  --success-color: #155724;
-  --border-color: #e0e6ef;
-}
-
 html, body {
   height: 100%;
   background: var(--page-bg);
+  color: var(--text);
 }
 
 .cadastro-wrapper {
@@ -102,7 +90,7 @@ html, body {
 
 label {
   font-weight: 600;
-  color: #233142;
+  color: var(--text);
   font-size: 0.9rem;
 }
 
@@ -110,7 +98,7 @@ input, select {
   padding: 12px 14px;
   border-radius: 10px;
   border: 1px solid var(--border-color);
-  background: #fff;
+  background: var(--input-bg);
   font-size: 1rem;
   outline: none;
   transition: box-shadow 0.12s, border-color 0.12s;
