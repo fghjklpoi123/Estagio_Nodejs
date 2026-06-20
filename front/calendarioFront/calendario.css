@@ -1,0 +1,245 @@
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial; }
+
+body {
+    background: #f3f6fb;
+    display: flex;
+}
+
+/* ========================= SIDEBAR ========================= */
+
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  position: fixed;
+  left: 0; top: 0;
+  background: linear-gradient(180deg, #0b3b7e, #0f4fa8);
+  color: #fff;
+  padding: 25px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  z-index: 1000;
+  box-shadow: 4px 0 18px rgba(0,0,0,0.08);
+  overflow: auto;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.sidebar-logo img {
+  width: 48px; height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  padding: 4px;
+}
+.sidebar-logo span { color: #e8f1ff; font-weight: 700; }
+
+.sidebar .menu,
+.sidebar .menu-bottom {
+  list-style: none;
+  padding: 0; margin: 0;
+}
+.sidebar .menu li { margin-bottom: 10px; }
+
+.sidebar .menu a,
+.sidebar .menu-bottom a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #dce7ff;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  transition: background 0.12s, transform 0.08s;
+}
+.sidebar .menu a:hover {
+  background: rgba(255,255,255,0.12);
+  transform: translateX(3px);
+}
+.sidebar .menu a i { width: 20px; text-align: center; }
+.sidebar .menu a.active {
+  background: rgba(255,255,255,0.18);
+  color: #fff; font-weight: 700;
+}
+.sidebar .menu-bottom {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ========================= CONTENT ========================= */
+
+.content {
+  margin-left: 260px;
+  padding: 40px;
+  width: calc(100% - 260px);
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.top h1 {
+  font-size: 1.8rem;
+  color: #1e2a3b;
+}
+
+/* ========================= FILTROS ========================= */
+
+.filters { display: flex; gap: 10px; }
+
+.filters input,
+.filters select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+}
+
+/* ========================= BOTÕES ========================= */
+
+.btn-primary {
+  background: #0f4fa8;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-primary:hover { background: #0b3b7e; }
+
+.btn-secondary {
+  background: #ccc;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+.btn-secondary:hover { background: #bbb; }
+
+/* ========================= LISTA / CARDS ========================= */
+
+.lista {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  padding-top: 50px;
+  border-radius: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+.card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #1e2a3b;
+}
+
+.card span {
+  color: #6d7b8c;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.card p {
+  color: #6d7b8c;
+  font-size: 0.88rem;
+  margin-top: 8px;
+}
+
+.edit-btn, .delete-btn {
+  position: absolute;
+  top: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.edit-btn { right: 45px; color: #0f4fa8; font-size: 1.1rem; }
+.delete-btn { right: 15px; color: #d9534f; font-size: 1.1rem; }
+
+/* ========================= MODAL ========================= */
+
+.modal-bg {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+.modal-bg.active { display: flex; }
+
+.modal {
+  background: white;
+  padding: 25px;
+  width: 380px;
+  max-height: 80vh;
+  overflow-y: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.modal h2 {
+  margin-bottom: 20px;
+  color: #1e2a3b;
+  font-size: 1.3rem;
+}
+
+.modal label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  color: #334155;
+}
+
+.modal input,
+.modal select,
+.modal textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+}
+
+.modal textarea { height: 80px; resize: none; }
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+/* ========================= RESPONSIVO ========================= */
+
+@media (max-width: 900px) {
+  .sidebar { width: 220px; }
+  .content { margin-left: 220px; width: calc(100% - 220px); }
+}
+
+@media (max-width: 600px) {
+  .top { flex-direction: column; gap: 12px; align-items: flex-start; }
+  .modal { width: 90%; }
+}
+

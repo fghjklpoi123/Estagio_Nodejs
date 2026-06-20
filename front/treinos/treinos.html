@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Treinadores</title>
-
-  <link rel="stylesheet" href="treinadores.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Treinos</title>
+  <link rel="stylesheet" href="treinos.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <script src="/js/authGuard.js"></script>
 </head>
 <body>
 
- <aside class="sidebar">
+    <aside class="sidebar">
   <div class="sidebar-logo">
     <img src="../loginFront/logo.png" alt="Logo">
     <span>Nome da Empresa</span>
@@ -34,71 +33,67 @@
   </ul>
 </aside>
 
-
-
-
-
   <main class="content">
     <div class="top">
-      <h1>Treinadores</h1>
-
+      <h1>Treinos</h1>
       <div class="filters">
-        <input type="text" id="buscarTreinador" placeholder="Buscar treinador...">
-        <select id="filtroModalidadeTreinador">
+        <input type="text" id="buscarTreino" placeholder="Buscar treino...">
+        <select id="filtroModalidadeTreino">
           <option value="">Modalidade</option>
         </select>
       </div>
-
-      <button id="btnNovoTreinador" class="btn-primary">
-        <i class="fa-solid fa-plus"></i> Novo Treinador
+      <button id="btnNovoTreino" class="btn-primary">
+        <i class="fa-solid fa-plus"></i> Novo Treino
       </button>
     </div>
 
-    <section class="lista" id="listaTreinadores"></section>
-    <div id="paginacaoTreinadores" class="paginacao"></div>
+    <section class="lista" id="listaTreinos"></section>
+    <div id="paginacaoTreinos" class="paginacao"></div>
   </main>
 
-
-  <div class="modal-bg" id="modalTreinador">
+  <div class="modal-bg" id="modalTreino">
     <div class="modal">
-      <h2 id="tituloModalTreinador">Novo Treinador</h2>
+      <h2 id="tituloModalTreino">Novo Treino</h2>
 
-      <label>Nome</label>
-      <input type="text" id="nomeTreinador">
+      <label>Nome do Treino</label>
+      <input type="text" id="nomeTreino">
 
-      <label>E-mail</label>
-      <input type="email" id="emailTreinador">
-
-      <label>CPF</label>
-      <input type="text" id="cpfTreinador" placeholder="000.000.000-00">
-
-      <label>Telefone</label>
-      <input type="tel" id="telefoneTreinador" placeholder="(00) 00000-0000">
-
-      <label>Sexo</label>
-      <select id="sexoTreinador">
-        <option value="">Selecione</option>
-        <option value="F">Feminino (F)</option>
-        <option value="M">Masculino (M)</option>
-        <option value="O">Outro (O)</option>
-      </select>
-
-      <label>Data de nascimento</label>
-      <input type="date" id="nascTreinador">
+      <label>Descrição</label>
+      <textarea id="descricaoTreino" placeholder="Descreva o treino..."></textarea>
 
       <label>Modalidade</label>
-      <select id="modalidadeTreinador">
+      <select id="modalidadeTreino">
+        <option value="">Selecione</option>
       </select>
 
-      <label>Senha</label>
-      <input type="password" id="senhaTreinador" placeholder="••••••••" maxlength="32">
+      <label>Treinador</label>
+      <select id="treinadorTreino">
+        <option value="">Selecione</option>
+      </select>
+
+      <label>Aluno</label>
+      <select id="alunoTreino">
+        <option value="">Selecione</option>
+      </select>
+
+      <label>Duração (minutos)</label>
+      <input type="number" id="duracaoTreino" placeholder="Ex: 60" min="1">
+
+      <label>Nível</label>
+      <select id="nivelTreino">
+        <option value="">Selecione</option>
+        <option value="Iniciante">Iniciante</option>
+        <option value="Intermediário">Intermediário</option>
+        <option value="Avançado">Avançado</option>
+      </select>
 
       <div class="modal-actions">
-        <button class="btn-primary" id="salvarTreinador">Salvar</button>
-        <button class="btn-secondary" id="fecharModalTreinador">Cancelar</button>
+        <button class="btn-primary" id="salvarTreino">Salvar</button>
+        <button class="btn-secondary" id="fecharModalTreino">Cancelar</button>
       </div>
     </div>
   </div>
-  <script type="module" src="/treinadoresFront/treinadores.js"></script>
+
+  <script type="module" src="/treinosFront/treinos.js"></script>
 </body>
 </html>
