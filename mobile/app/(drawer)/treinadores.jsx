@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { confirm } from '../../src/confirm';
 import { Ionicons } from '@expo/vector-icons';
 import { createProfessor, deleteProfessor, getModalidades, getProfessores, updateProfessor } from '../../src/api';
 import { maskCpf, maskData, maskTelefone, validarCPF } from '../../src/masks';
@@ -51,7 +52,7 @@ export default function TreinadoresScreen() {
       setTreinadores(treinadoresData || []);
       setModalidades(modalidadesData || []);
     } catch (erro) {
-      Alert.alert('Erro', erro.message || 'Erro ao carregar treinadores');
+      confirm('Erro', erro.message || 'Erro ao carregar treinadores');
     } finally {
       setCarregando(false);
     }
@@ -145,14 +146,14 @@ export default function TreinadoresScreen() {
       setModalVisible(false);
       await carregar();
     } catch (erro) {
-      Alert.alert('Erro', erro.message || 'Erro ao salvar treinador');
+      confirm('Erro', erro.message || 'Erro ao salvar treinador');
     } finally {
       setSalvando(false);
     }
   }
 
   function confirmarExclusao(treinador) {
-    Alert.alert('Excluir treinador', `Tem certeza que deseja excluir o treinador "${treinador.nome}"?`, [
+    confirm('Excluir treinador', `Tem certeza que deseja excluir o treinador "${treinador.nome}"?`, [
       { text: 'Cancelar', style: 'cancel' },
       {
         text: 'Excluir',
@@ -162,7 +163,7 @@ export default function TreinadoresScreen() {
             await deleteProfessor(treinador.id);
             await carregar();
           } catch (erro) {
-            Alert.alert('Erro', erro.message || 'Erro ao excluir treinador');
+            confirm('Erro', erro.message || 'Erro ao excluir treinador');
           }
         },
       },

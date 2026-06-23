@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { confirm } from '../../src/confirm';
 import { Ionicons } from '@expo/vector-icons';
 import { createAluno, deleteAluno, getAlunoModalidades, getAlunoPlano, getAlunos, updateAluno } from '../../src/api';
 import { maskCpf, maskData, maskTelefone, validarCPF } from '../../src/masks';
@@ -135,7 +136,7 @@ export default function AlunosScreen() {
       const data = await getAlunos();
       setAlunos(data || []);
     } catch (erro) {
-      Alert.alert('Erro', erro.message || 'Erro ao carregar alunos');
+      confirm('Erro', erro.message || 'Erro ao carregar alunos');
     } finally {
       setCarregando(false);
     }
@@ -232,14 +233,14 @@ export default function AlunosScreen() {
       setModalVisible(false);
       await carregar();
     } catch (erro) {
-      Alert.alert('Erro', erro.message || 'Erro ao salvar aluno');
+      confirm('Erro', erro.message || 'Erro ao salvar aluno');
     } finally {
       setSalvando(false);
     }
   }
 
   function confirmarExclusao(aluno) {
-    Alert.alert('Excluir aluno', `Tem certeza que deseja excluir o aluno "${aluno.nome}"?`, [
+    confirm('Excluir aluno', `Tem certeza que deseja excluir o aluno "${aluno.nome}"?`, [
       { text: 'Cancelar', style: 'cancel' },
       {
         text: 'Excluir',
@@ -249,7 +250,7 @@ export default function AlunosScreen() {
             await deleteAluno(aluno.id);
             await carregar();
           } catch (erro) {
-            Alert.alert('Erro', erro.message || 'Erro ao excluir aluno');
+            confirm('Erro', erro.message || 'Erro ao excluir aluno');
           }
         },
       },

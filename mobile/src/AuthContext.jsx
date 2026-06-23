@@ -1,25 +1,27 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setAuthToken, setOnUnauthorized } from './api';
 
-// Equivalente ao front/js/authGuard.js + às chaves de localStorage usadas em
-// login.js e logout.html ('alunoId', 'alunoNome', 'professorId', 'professorNome', 'tipo'),
-// só que usando AsyncStorage — o React Native não tem localStorage do navegador.
-const STORAGE_KEYS = ['alunoId', 'alunoNome', 'professorId', 'professorNome', 'tipo'];
+const STORAGE_KEYS = ['alunoId', 'alunoNome', 'professorId', 'professorNome', 'adminId', 'adminNome', 'tipo', 'token'];
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  // null = ainda carregando do AsyncStorage; false = sem sessão; objeto = logado
   const [session, setSession] = useState(null);
 
   useEffect(() => {
     AsyncStorage.multiGet(STORAGE_KEYS).then((pares) => {
       const dados = Object.fromEntries(pares);
-      if (dados.alunoId || dados.professorId) {
+
+      if (dados.token) {
+        setAuthToken(dados.token);
+      }
+
+      if (dados.alunoId || dados.professorId || dados.adminId) {
         setSession({
           tipo: dados.tipo,
-          id: dados.alunoId || dados.professorId,
-          nome: dados.alunoNome || dados.professorNome,
+          id: dados.alunoId || dados.professorId || dados.adminId,
+          nome: dados.alunoNome || dados.professorNome || dados.adminNome,
         });
       } else {
         setSession(false);
@@ -27,24 +29,32 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
-  const login = useCallback(async ({ tipo, id, nome }) => {
+  useEffect(() => {
+    setOnUnauthorized(() => {
+      AsyncStorage.multiRemove(STORAGE_KEYS);
+      setAuthToken(null);
+      setSession(false);
+    });
+  }, []);
+
+  const login = useCallback(async ({ tipo, id, nome, token }) => {
+    setAuthToken(token);
+
+    const pairs = [['tipo', tipo], ['token', token]];
     if (tipo === 'aluno') {
-      await AsyncStorage.multiSet([
-        ['alunoId', String(id)],
-        ['alunoNome', nome],
-        ['tipo', 'aluno'],
-      ]);
+      pairs.push(['alunoId', String(id)], ['alunoNome', nome]);
+    } else if (tipo === 'professor') {
+      pairs.push(['professorId', String(id)], ['professorNome', nome]);
     } else {
-      await AsyncStorage.multiSet([
-        ['professorId', String(id)],
-        ['professorNome', nome],
-        ['tipo', 'professor'],
-      ]);
+      pairs.push(['adminId', String(id)], ['adminNome', nome]);
     }
+
+    await AsyncStorage.multiSet(pairs);
     setSession({ tipo, id: String(id), nome });
   }, []);
 
   const logout = useCallback(async () => {
+    setAuthToken(null);
     await AsyncStorage.multiRemove(STORAGE_KEYS);
     setSession(false);
   }, []);

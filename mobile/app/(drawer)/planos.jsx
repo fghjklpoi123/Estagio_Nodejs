@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { confirm } from '../../src/confirm';
 import { createPlano, deletePlano, getModalidades, getPlanos, updatePlano } from '../../src/api';
 import { colors, radius } from '../../src/theme';
 import CrudModal from '../../src/components/CrudModal';
@@ -51,7 +52,7 @@ export default function PlanosScreen() {
       setPlanos(planosData || []);
       setModalidades(modalidadesData || []);
     } catch (erro) {
-      Alert.alert('Erro', erro.message || 'Erro ao carregar planos');
+      confirm('Erro', erro.message || 'Erro ao carregar planos');
     } finally {
       setCarregando(false);
     }
@@ -119,14 +120,14 @@ export default function PlanosScreen() {
       setModalVisible(false);
       await carregar();
     } catch (erro) {
-      Alert.alert('Erro', erro.message || 'Erro ao salvar plano');
+      confirm('Erro', erro.message || 'Erro ao salvar plano');
     } finally {
       setSalvando(false);
     }
   }
 
   function confirmarExclusao(plano) {
-    Alert.alert(
+    confirm(
       'Excluir plano',
       `Tem certeza que deseja excluir o plano de "${modalidadesMap[plano.modalidade_id] || 'modalidade'}"?`,
       [
@@ -139,7 +140,7 @@ export default function PlanosScreen() {
               await deletePlano(plano.id);
               await carregar();
             } catch (erro) {
-              Alert.alert('Erro', erro.message || 'Erro ao excluir plano');
+              confirm('Erro', erro.message || 'Erro ao excluir plano');
             }
           },
         },

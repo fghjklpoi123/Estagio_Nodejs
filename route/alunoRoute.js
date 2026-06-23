@@ -1,12 +1,13 @@
-const {inserir, listar, buscarUm, update, remove, getPlano} = require('../controller/alunoController');
-
 const express = require('express');
 const router = express.Router();
+const { inserir, listar, buscarUm, update, remove, getPlano } = require('../controller/alunoController');
+const { autenticar, autorizar } = require('../middleware/auth');
 
-router.get('/alunos', listar);
-router.get('/alunos/:id', buscarUm);
-router.get('/alunos/:id/plano', getPlano);
-router.post('/alunos', inserir);
-router.put('/alunos/:id', update);
-router.delete('/alunos/:id', remove);
+router.post('/alunos', inserir); // cadastro público
+router.get('/alunos', autenticar, listar);
+router.get('/alunos/:id', autenticar, buscarUm);
+router.get('/alunos/:id/plano', autenticar, getPlano);
+router.put('/alunos/:id', autenticar, autorizar('professor', 'admin'), update);
+router.delete('/alunos/:id', autenticar, autorizar('professor', 'admin'), remove);
+
 module.exports = router;

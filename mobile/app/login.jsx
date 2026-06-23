@@ -14,7 +14,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../src/AuthContext';
-import { loginAluno, loginProfessor } from '../src/api';
+import { loginAdmin, loginAluno, loginProfessor } from '../src/api';
 import { colors, radius } from '../src/theme';
 
 // Recriação de front/loginFront/login.html + login.css + login.js.
@@ -46,7 +46,7 @@ export default function LoginScreen() {
     let erroAluno = null;
     try {
       const dataAluno = await loginAluno(emailLimpo, senhaLimpa);
-      await concluirLogin('aluno', dataAluno.aluno);
+      await concluirLogin('aluno', dataAluno.aluno, dataAluno.token);
       return;
     } catch (erro) {
       erroAluno = erro;
@@ -54,7 +54,13 @@ export default function LoginScreen() {
 
     try {
       const dataProfessor = await loginProfessor(emailLimpo, senhaLimpa);
-      await concluirLogin('professor', dataProfessor.professor);
+      await concluirLogin('professor', dataProfessor.professor, dataProfessor.token);
+      return;
+    } catch {}
+
+    try {
+      const dataAdmin = await loginAdmin(emailLimpo, senhaLimpa);
+      await concluirLogin('admin', dataAdmin.admin, dataAdmin.token);
       return;
     } catch {
       setMensagem({ tipo: 'erro', texto: erroAluno?.message || 'Email ou senha inválidos' });
@@ -62,8 +68,8 @@ export default function LoginScreen() {
     }
   }
 
-  async function concluirLogin(tipo, pessoa) {
-    await login({ tipo, id: pessoa.id, nome: pessoa.nome });
+  async function concluirLogin(tipo, pessoa, token) {
+    await login({ tipo, id: pessoa.id, nome: pessoa.nome, token });
     setMensagem({ tipo: 'sucesso', texto: '✓ Login bem-sucedido!' });
     setTimeout(() => router.replace('/home'), 1200);
   }

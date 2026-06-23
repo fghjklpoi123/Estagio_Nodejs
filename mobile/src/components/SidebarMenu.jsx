@@ -6,24 +6,27 @@ import { useRouter, usePathname } from 'expo-router';
 import { useAuth } from '../AuthContext';
 import { colors } from '../theme';
 
-// Equivalente mobile da <aside class="sidebar"> de front/homeFront/home.html + home.css:
-// mesmo gradiente azul (180deg, #0b3b7e -> #0f4fa8), logo, lista de menu com ícones
-// Font Awesome (mesmos nomes do fa-solid original) e "Sair" fixado embaixo.
 const MENU_ITEMS = [
-  { route: '/home', label: 'Home', icon: 'house' },
-  { route: '/alunos', label: 'Alunos', icon: 'user' },
-  { route: '/treinadores', label: 'Treinadores', icon: 'user-tie' },
-  { route: '/modalidades', label: 'Modalidades', icon: 'dumbbell' },
-  { route: '/planos', label: 'Planos (Admin)', icon: 'list' },
-  { route: '/meus-planos', label: 'Meus Planos', icon: 'ticket' },
-  { route: '/relatorios', label: 'Relatórios', icon: 'file' },
+  { route: '/home',        label: 'Home',           icon: 'house',     papel: null },
+  { route: '/alunos',      label: 'Alunos',         icon: 'user',      papel: ['professor', 'admin'] },
+  { route: '/treinadores', label: 'Treinadores',    icon: 'user-tie',  papel: ['admin'] },
+  { route: '/modalidades', label: 'Modalidades',    icon: 'dumbbell',  papel: ['admin'] },
+  { route: '/exercicios',  label: 'Exercícios',     icon: 'dumbbell',  papel: ['professor', 'admin'] },
+  { route: '/fichas',      label: 'Fichas de Treino',icon: 'clipboard', papel: ['professor', 'admin'] },
+  { route: '/planos',      label: 'Planos (Admin)', icon: 'list',      papel: ['admin'] },
+  { route: '/meus-treinos',label: 'Meus Treinos',    icon: 'clipboard', papel: ['aluno'] },
+  { route: '/meus-planos', label: 'Meus Planos',    icon: 'ticket',    papel: ['aluno'] },
+  { route: '/relatorios',  label: 'Relatórios',     icon: 'file',      papel: ['admin'] },
 ];
 
 export default function SidebarMenu() {
   const router = useRouter();
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
-  const { logout } = useAuth();
+  const { session, logout } = useAuth();
+
+  const tipo = session?.tipo;
+  const itensVisiveis = MENU_ITEMS.filter((item) => item.papel === null || (Array.isArray(item.papel) && item.papel.includes(tipo)));
 
   async function handleLogout() {
     await logout();
@@ -46,7 +49,7 @@ export default function SidebarMenu() {
           <Text style={styles.logoText}>Nome da Empresa</Text>
         </View>
 
-        {MENU_ITEMS.map((item) => {
+        {itensVisiveis.map((item) => {
           const ativo = pathname === item.route;
           return (
             <Pressable

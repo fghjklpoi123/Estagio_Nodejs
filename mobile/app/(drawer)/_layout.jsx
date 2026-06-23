@@ -14,6 +14,9 @@ const TITLES = {
   treinadores: 'Treinadores',
   modalidades: 'Modalidades',
   planos: 'Planos (Admin)',
+  exercicios: 'Exercícios',
+  fichas: 'Fichas de Treino',
+  'meus-treinos': 'Meus Treinos',
   'meus-planos': 'Meus Planos',
   relatorios: 'Relatórios',
 };

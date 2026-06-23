@@ -52,7 +52,7 @@ module.exports = {
     atualizarAluno: (id, dados) => {
         const campos = [];
         const valores = [];
-        const allowed = ['nome','cpf','telefone','sexo','data_nascimento','email','senha'];
+        const allowed = ['nome','cpf','telefone','sexo','data_nascimento','email','senha','endereco','situacao','obs'];
         allowed.forEach((k) => { if (k in dados) { campos.push(`${k} = ?`); valores.push(dados[k]); } });
         if (campos.length === 0) return Promise.resolve({affectedRows:0});
         valores.push(id);

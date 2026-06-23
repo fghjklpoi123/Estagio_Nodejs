@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { confirm } from '../../src/confirm';
 import { useAuth } from '../../src/AuthContext';
 import { assinarPlano, cancelarInscricao, getAlunoModalidades, getModalidades, getPlanos } from '../../src/api';
 import { colors, radius } from '../../src/theme';
@@ -63,7 +64,7 @@ export default function MeusPlanosScreen() {
 
   function confirmarAssinar(plano) {
     const nomeModalidade = modalidadesMap[plano.modalidade_id] || 'modalidade';
-    Alert.alert('Assinar plano', `Confirma a assinatura do plano de ${nomeModalidade}?`, [
+    confirm('Assinar plano', `Confirma a assinatura do plano de ${nomeModalidade}?`, [
       { text: 'Cancelar', style: 'cancel' },
       { text: 'Assinar', onPress: () => assinar(plano) },
     ]);
@@ -72,7 +73,7 @@ export default function MeusPlanosScreen() {
   async function assinar(plano) {
     setAcaoEmAndamento(plano.id);
     try {
-      await assinarPlano(plano.id, alunoId);
+      await assinarPlano(plano.id);
       setStatus({ tipo: 'success', texto: 'Plano assinado com sucesso!' });
       await carregar();
     } catch (erro) {
@@ -89,7 +90,7 @@ export default function MeusPlanosScreen() {
 
   function confirmarCancelar(plano) {
     const nomeModalidade = modalidadesMap[plano.modalidade_id] || 'modalidade';
-    Alert.alert('Cancelar assinatura', `Confirma o cancelamento da assinatura de ${nomeModalidade}?`, [
+    confirm('Cancelar assinatura', `Confirma o cancelamento da assinatura de ${nomeModalidade}?`, [
       { text: 'Voltar', style: 'cancel' },
       { text: 'Cancelar Assinatura', style: 'destructive', onPress: () => cancelar(plano) },
     ]);

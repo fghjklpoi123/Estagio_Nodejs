@@ -2,21 +2,18 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { confirm } from '../../src/confirm';
 import { Ionicons } from '@expo/vector-icons';
-import { createModalidade, deleteModalidade, getModalidades, updateModalidade } from '../../src/api';
+import { createExercicio, deleteExercicio, getExercicios, getModalidades, updateExercicio } from '../../src/api';
 import { colors, radius } from '../../src/theme';
 import CrudModal from '../../src/components/CrudModal';
-import { TextAreaField, TextField } from '../../src/components/FormFields';
+import { SelectField, TextAreaField, TextField } from '../../src/components/FormFields';
 
-// Recriação de front/modalidadesFront/modalidades.html + .css + .js (visão admin).
-// O original é uma página de CRUD simples: grade de cards com nome + descrição,
-// botões editar/excluir, e um modal com apenas dois campos (nome e descrição).
-// A busca filtra por nome OU descrição.
+const FORM_VAZIO = { nome: '', descricao: '', modalidadeId: '' };
 
-const FORM_VAZIO = { nome: '', descricao: '' };
-
-export default function ModalidadesScreen() {
+export default function ExerciciosScreen() {
+  const [exercicios, setExercicios] = useState([]);
   const [modalidades, setModalidades] = useState([]);
   const [busca, setBusca] = useState('');
+  const [filtroModalidade, setFiltroModalidade] = useState('');
   const [carregando, setCarregando] = useState(true);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -28,10 +25,11 @@ export default function ModalidadesScreen() {
   const carregar = useCallback(async () => {
     setCarregando(true);
     try {
-      const data = await getModalidades();
-      setModalidades(data || []);
+      const [exerciciosData, modalidadesData] = await Promise.all([getExercicios(), getModalidades()]);
+      setExercicios(exerciciosData || []);
+      setModalidades(modalidadesData || []);
     } catch (erro) {
-      confirm('Erro', erro.message || 'Erro ao carregar modalidades');
+      confirm('Erro', erro.message || 'Erro ao carregar exercícios');
     } finally {
       setCarregando(false);
     }
@@ -41,11 +39,19 @@ export default function ModalidadesScreen() {
     carregar();
   }, [carregar]);
 
-  const modalidadesFiltradas = modalidades.filter((m) => {
+  const modalidadesMap = Object.fromEntries(modalidades.map((m) => [m.id, m.nome]));
+
+  const exerciciosFiltrados = exercicios.filter((e) => {
     const termo = busca.trim().toLowerCase();
-    if (!termo) return true;
-    return (m.nome || '').toLowerCase().includes(termo) || (m.descricao || '').toLowerCase().includes(termo);
+    const nomeOk = !termo || (e.nome || '').toLowerCase().includes(termo) || (e.descricao || '').toLowerCase().includes(termo);
+    const modOk = !filtroModalidade || String(e.modalidade_id || '') === String(filtroModalidade);
+    return nomeOk && modOk;
   });
+
+  const filtroModalidadeOpcoes = [
+    { value: '', label: 'Todas' },
+    ...modalidades.map((m) => ({ value: String(m.id), label: m.nome })),
+  ];
 
   function abrirNovo() {
     setEditId(null);
@@ -54,9 +60,13 @@ export default function ModalidadesScreen() {
     setModalVisible(true);
   }
 
-  function abrirEdicao(modalidade) {
-    setEditId(modalidade.id);
-    setForm({ nome: modalidade.nome || '', descricao: modalidade.descricao || '' });
+  function abrirEdicao(exercicio) {
+    setEditId(exercicio.id);
+    setForm({
+      nome: exercicio.nome || '',
+      descricao: exercicio.descricao || '',
+      modalidadeId: exercicio.modalidade_id ? String(exercicio.modalidade_id) : '',
+    });
     setErros({});
     setModalVisible(true);
   }
@@ -69,39 +79,44 @@ export default function ModalidadesScreen() {
   async function salvar() {
     const novosErros = {};
     if (!form.nome.trim()) novosErros.nome = true;
+    if (!form.modalidadeId) novosErros.modalidadeId = true;
     setErros(novosErros);
     if (Object.keys(novosErros).length > 0) return;
 
-    const dados = { nome: form.nome.trim(), descricao: form.descricao.trim() };
+    const dados = {
+      nome: form.nome.trim(),
+      descricao: form.descricao.trim(),
+      modalidade_id: Number(form.modalidadeId),
+    };
 
     setSalvando(true);
     try {
       if (editId) {
-        await updateModalidade(editId, dados);
+        await updateExercicio(editId, dados);
       } else {
-        await createModalidade(dados);
+        await createExercicio(dados);
       }
       setModalVisible(false);
       await carregar();
     } catch (erro) {
-      confirm('Erro', erro.message || 'Erro ao salvar modalidade');
+      confirm('Erro', erro.message || 'Erro ao salvar exercício');
     } finally {
       setSalvando(false);
     }
   }
 
-  function confirmarExclusao(modalidade) {
-    confirm('Excluir modalidade', `Tem certeza que deseja excluir "${modalidade.nome}"?`, [
+  function confirmarExclusao(exercicio) {
+    confirm('Excluir exercício', `Tem certeza que deseja excluir "${exercicio.nome}"?`, [
       { text: 'Cancelar', style: 'cancel' },
       {
         text: 'Excluir',
         style: 'destructive',
         onPress: async () => {
           try {
-            await deleteModalidade(modalidade.id);
+            await deleteExercicio(exercicio.id);
             await carregar();
           } catch (erro) {
-            confirm('Erro', erro.message || 'Erro ao excluir modalidade');
+            confirm('Erro', erro.message || 'Erro ao excluir exercício');
           }
         },
       },
@@ -111,37 +126,56 @@ export default function ModalidadesScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.top}>
-        <Text style={styles.heading}>Modalidades</Text>
+        <Text style={styles.heading}>Exercícios</Text>
         <TextInput
           style={styles.busca}
-          placeholder="Buscar modalidade..."
+          placeholder="Buscar exercício..."
           placeholderTextColor="#999"
           value={busca}
           onChangeText={setBusca}
         />
+        <View style={styles.filtroRow}>
+          {filtroModalidadeOpcoes.map((opt) => {
+            const ativo = filtroModalidade === opt.value;
+            return (
+              <Pressable
+                key={opt.value}
+                onPress={() => setFiltroModalidade(opt.value)}
+                style={[styles.filtroChip, ativo && styles.filtroChipAtivo]}
+              >
+                <Text style={[styles.filtroChipTexto, ativo && styles.filtroChipTextoAtivo]} numberOfLines={1}>
+                  {opt.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
         <Pressable style={styles.btnNovo} onPress={abrirNovo}>
-          <Text style={styles.btnNovoTexto}>+ Nova Modalidade</Text>
+          <Text style={styles.btnNovoTexto}>+ Novo Exercício</Text>
         </Pressable>
       </View>
 
       {carregando ? (
         <ActivityIndicator color={colors.blue600} style={styles.loading} />
-      ) : modalidadesFiltradas.length === 0 ? (
-        <Text style={styles.empty}>Nenhuma modalidade encontrada.</Text>
+      ) : exerciciosFiltrados.length === 0 ? (
+        <Text style={styles.empty}>Nenhum exercício encontrado.</Text>
       ) : (
         <View style={styles.lista}>
-          {modalidadesFiltradas.map((modalidade) => (
-            <View key={modalidade.id} style={styles.card}>
+          {exerciciosFiltrados.map((exercicio) => (
+            <View key={exercicio.id} style={styles.card}>
               <View style={styles.cardActions}>
-                <Pressable style={styles.actionBtn} onPress={() => abrirEdicao(modalidade)}>
+                <Pressable style={styles.actionBtn} onPress={() => abrirEdicao(exercicio)}>
                   <Ionicons name="pencil" size={18} color={colors.blue600} />
                 </Pressable>
-                <Pressable style={styles.actionBtn} onPress={() => confirmarExclusao(modalidade)}>
+                <Pressable style={styles.actionBtn} onPress={() => confirmarExclusao(exercicio)}>
                   <Ionicons name="trash" size={18} color={colors.deleteBtn} />
                 </Pressable>
               </View>
-              <Text style={styles.cardTitle}>{modalidade.nome}</Text>
-              {modalidade.descricao ? <Text style={styles.cardDesc}>{modalidade.descricao}</Text> : null}
+              <Text style={styles.cardTitle}>{exercicio.nome}</Text>
+              {exercicio.descricao ? <Text style={styles.cardDesc}>{exercicio.descricao}</Text> : null}
+              <Text style={styles.cardModalidade}>
+                Modalidade: {modalidadesMap[exercicio.modalidade_id] || '—'}
+              </Text>
             </View>
           ))}
         </View>
@@ -149,23 +183,31 @@ export default function ModalidadesScreen() {
 
       <CrudModal
         visible={modalVisible}
-        title={editId ? 'Editar Modalidade' : 'Nova Modalidade'}
+        title={editId ? 'Editar Exercício' : 'Novo Exercício'}
         onClose={fecharModal}
         onSalvar={salvar}
         salvando={salvando}
       >
         <TextField
           label="Nome"
-          placeholder="Nome da modalidade"
+          placeholder="Nome do exercício"
           value={form.nome}
           onChangeText={(v) => setForm((f) => ({ ...f, nome: v }))}
           erro={erros.nome}
         />
         <TextAreaField
           label="Descrição"
-          placeholder="Descreva a modalidade..."
+          placeholder="Descreva o exercício..."
           value={form.descricao}
           onChangeText={(v) => setForm((f) => ({ ...f, descricao: v }))}
+        />
+        <SelectField
+          label="Modalidade"
+          value={form.modalidadeId}
+          onChange={(v) => setForm((f) => ({ ...f, modalidadeId: v }))}
+          options={modalidades.map((m) => ({ value: String(m.id), label: m.nome }))}
+          placeholder="Nenhuma modalidade cadastrada"
+          erro={erros.modalidadeId}
         />
       </CrudModal>
     </ScrollView>
@@ -198,6 +240,31 @@ const styles = StyleSheet.create({
     fontSize: 15,
     backgroundColor: '#fff',
     color: '#333',
+  },
+  filtroRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  filtroChip: {
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: radius.sm,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    backgroundColor: '#fff',
+  },
+  filtroChipAtivo: {
+    backgroundColor: colors.blue600,
+    borderColor: colors.blue600,
+  },
+  filtroChipTexto: {
+    color: '#333',
+    fontWeight: '600',
+    fontSize: 13,
+  },
+  filtroChipTextoAtivo: {
+    color: '#fff',
   },
   btnNovo: {
     backgroundColor: colors.blue600,
@@ -264,5 +331,10 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginBottom: 8,
     lineHeight: 18,
+  },
+  cardModalidade: {
+    color: colors.blue600,
+    fontSize: 13,
+    fontWeight: '600',
   },
 });
