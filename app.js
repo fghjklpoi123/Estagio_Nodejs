@@ -23,8 +23,10 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+// serve o front
 app.use(express.static(path.join(__dirname, 'front')));
 
+// permite acessar html dentro do front via /api/arquivo.html
 app.use('/api', (req, res, next) => {
     if (req.method === 'GET' && req.path && req.path.endsWith('.html')) {
         const filePath = path.join(__dirname, 'front', req.path);
@@ -35,6 +37,7 @@ app.use('/api', (req, res, next) => {
     next();
 });
 
+// rota inicial
 app.get('/', (req, res) => {
     return res.redirect('/loginFront/login.html');
 });
@@ -64,9 +67,9 @@ app.use('/api', modalidadeRoute);
 app.use('/api', alunoModalidadeRoute);
 app.use('/api', planoRoute);
 
-// inicia o servidor
+// porta do render
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`Servidor rodando em: http://localhost:${PORT}`);
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
