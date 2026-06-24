@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
       marcarErro(telefoneInput, false);
     }
     
-    const dados = { name: nome, cpf, telefone: telefone || '', sexo, data_nascimento: nasc, email, senha, endereco, situacao, obs };
+    const dados = { nome: nome, cpf, telefone: telefone || '', sexo, data_nascimento: nasc, email, senha, endereco, situacao, obs };
     try{ if(alunoEditando!==null) await api.updateAluno(alunoEditando,dados); else await api.createAluno(dados); modal&&modal.classList.remove('active'); limpar(); await carregarAlunos(); } catch(err){ console.error(err); alert('Erro ao salvar: '+err.message); }
   });
 
