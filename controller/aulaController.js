@@ -45,7 +45,15 @@ exports.criar = async (req, res) => {
             return res.status(400).json({ erro: 'Aluno não está inscrito nesta modalidade' });
         }
 
-        const professor_id = req.usuario.tipo === 'professor' ? req.usuario.id : (req.body.professor_id || req.usuario.id);
+        let professor_id;
+        if (req.usuario.tipo === 'professor') {
+            professor_id = req.usuario.id;
+        } else {
+            professor_id = req.body.professor_id;
+            if (!professor_id || isNaN(professor_id)) {
+                return res.status(400).json({ erro: 'Professor obrigatório' });
+            }
+        }
 
         const aulaId = await criarAula({ aluno_id, professor_id, modalidade_id, data_aula, observacao });
         await inserirExerciciosAula(aulaId, exercicios);

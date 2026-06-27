@@ -35,6 +35,13 @@ require('./model/alunoModalidade');
 require('./model/admin');
 require('./model/exercicio');
 require('./model/aula');
+require('./model/checkin');
+require('./model/lancamento');
+require('./model/alunoPlano');
+require('./model/log');
+
+const loggerMiddleware = require('./middleware/logger');
+app.use(loggerMiddleware);
 
 const alunoRoute = require('./route/alunoRoute');
 const professorRoute = require('./route/professorRoute');
@@ -45,6 +52,9 @@ const loginRoute = require('./route/loginRoute');
 const relatorioRoute = require('./route/relatorioRoute');
 const exercicioRoute = require('./route/exercicioRoute');
 const aulaRoute = require('./route/aulaRoute');
+const checkinRoute = require('./route/checkinRoute');
+const lancamentoRoute = require('./route/lancamentoRoute');
+const logRoute = require('./route/logRoute');
 
 app.use('/api', loginRoute);
 app.use('/api', alunoRoute);
@@ -55,6 +65,9 @@ app.use('/api', alunoModalidadeRoute);
 app.use('/api', planoRoute);
 app.use('/api', exercicioRoute);
 app.use('/api', aulaRoute);
+app.use('/api', checkinRoute);
+app.use('/api', lancamentoRoute);
+app.use('/api', logRoute);
 
 const PORT = process.env.PORT || 3000;
 

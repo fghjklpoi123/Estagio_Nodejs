@@ -103,6 +103,9 @@ export const updatePlano = (id, dados) => request(`/planos/${id}`, { method: 'PU
 export const deletePlano = (id) => request(`/planos/${id}`, { method: 'DELETE' });
 export const assinarPlano = (planoId) =>
   request(`/planos/${planoId}/assinar`, { method: 'POST', body: JSON.stringify({}) });
+export const getMeusPlanos = () => request('/planos/meus');
+export const cancelarPlano = (planoId) =>
+  request(`/planos/${planoId}/cancelar`, { method: 'DELETE' });
 
 // --- Aluno-Modalidade ---
 export const inscreverAluno = (alunoId, modalidadeId) =>
@@ -132,7 +135,58 @@ export const createAula = (dados) => request('/aulas', { method: 'POST', body: J
 export const updateAula = (id, dados) => request(`/aulas/${id}`, { method: 'PUT', body: JSON.stringify(dados) });
 export const deleteAula = (id) => request(`/aulas/${id}`, { method: 'DELETE' });
 
+// --- Check-in ---
+export const fazerCheckin = () => request('/checkins', { method: 'POST', body: JSON.stringify({}) });
+export const statusCheckinHoje = () => request('/checkins/hoje');
+export const historicoCheckins = () => request('/checkins/historico');
+export const listarCheckins = (filtros) => {
+  const params = new URLSearchParams();
+  if (filtros?.aluno_id) params.set('aluno_id', filtros.aluno_id);
+  if (filtros?.data) params.set('data', filtros.data);
+  if (filtros?.data_inicio) params.set('data_inicio', filtros.data_inicio);
+  if (filtros?.data_fim) params.set('data_fim', filtros.data_fim);
+  const qs = params.toString();
+  return request('/checkins' + (qs ? `?${qs}` : ''));
+};
+export const totalCheckinsHoje = () => request('/checkins/total-hoje');
+
+// --- Financeiro ---
+export const getLancamentos = (filtros) => {
+  const params = new URLSearchParams();
+  if (filtros?.tipo) params.set('tipo', filtros.tipo);
+  if (filtros?.categoria) params.set('categoria', filtros.categoria);
+  if (filtros?.mes) params.set('mes', filtros.mes);
+  if (filtros?.ano) params.set('ano', filtros.ano);
+  const qs = params.toString();
+  return request('/financeiro' + (qs ? `?${qs}` : ''));
+};
+export const getResumoFinanceiro = (filtros) => {
+  const params = new URLSearchParams();
+  if (filtros?.mes) params.set('mes', filtros.mes);
+  if (filtros?.ano) params.set('ano', filtros.ano);
+  const qs = params.toString();
+  return request('/financeiro/resumo' + (qs ? `?${qs}` : ''));
+};
+export const createLancamento = (dados) => request('/financeiro', { method: 'POST', body: JSON.stringify(dados) });
+export const updateLancamento = (id, dados) => request(`/financeiro/${id}`, { method: 'PUT', body: JSON.stringify(dados) });
+export const deleteLancamento = (id) => request(`/financeiro/${id}`, { method: 'DELETE' });
+
+// --- Logs ---
+export const getLogs = (filtros) => {
+  const params = new URLSearchParams();
+  if (filtros?.usuario_tipo) params.set('usuario_tipo', filtros.usuario_tipo);
+  if (filtros?.metodo) params.set('metodo', filtros.metodo);
+  if (filtros?.usuario_nome) params.set('usuario_nome', filtros.usuario_nome);
+  if (filtros?.data) params.set('data', filtros.data);
+  if (filtros?.rota) params.set('rota', filtros.rota);
+  const qs = params.toString();
+  return request('/logs' + (qs ? `?${qs}` : ''));
+};
+
 // --- Relatórios ---
-export const getRelatorioModalidadesPopulares = () => request('/relatorios/modalidades-populares');
-export const getRelatorioAlunosSemModalidade = () => request('/relatorios/alunos-sem-modalidade');
-export const getRelatorioAlunosPorModalidade = () => request('/relatorios/alunos-por-modalidade');
+export const getRelatorioDinamico = (filtros) => {
+  const params = new URLSearchParams();
+  Object.entries(filtros || {}).forEach(([k, v]) => { if (v) params.set(k, v); });
+  const qs = params.toString();
+  return request('/relatorios' + (qs ? `?${qs}` : ''));
+};

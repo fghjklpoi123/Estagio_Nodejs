@@ -3,7 +3,7 @@ import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, Text
 import { confirm } from '../../src/confirm';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../src/AuthContext';
-import { createAula, deleteAula, getAlunos, getAula, getAulas, getExercicios, getAlunoModalidades, updateAula } from '../../src/api';
+import { createAula, deleteAula, getAlunos, getAula, getAulas, getExercicios, getAlunoModalidades, getProfessores, updateAula } from '../../src/api';
 import { colors, radius } from '../../src/theme';
 import { maskData } from '../../src/masks';
 
@@ -18,12 +18,16 @@ export default function FichasScreen() {
   const [editId, setEditId] = useState(null);
   const [salvando, setSalvando] = useState(false);
 
+  const isAdmin = session?.tipo === 'admin';
+
   // Dados para os selects em cascata
   const [alunos, setAlunos] = useState([]);
+  const [professores, setProfessores] = useState([]);
   const [modalidadesAluno, setModalidadesAluno] = useState([]);
   const [exerciciosModalidade, setExerciciosModalidade] = useState([]);
 
   // Campos do form
+  const [professorId, setProfessorId] = useState('');
   const [alunoId, setAlunoId] = useState('');
   const [modalidadeId, setModalidadeId] = useState('');
   const [dataAula, setDataAula] = useState('');
@@ -38,9 +42,12 @@ export default function FichasScreen() {
   const carregar = useCallback(async () => {
     setCarregando(true);
     try {
-      const [fichasData, alunosData] = await Promise.all([getAulas(), getAlunos()]);
-      setFichas(fichasData || []);
-      setAlunos(alunosData || []);
+      const promises = [getAulas(), getAlunos()];
+      if (isAdmin) promises.push(getProfessores());
+      const results = await Promise.all(promises);
+      setFichas(results[0] || []);
+      setAlunos(results[1] || []);
+      if (isAdmin) setProfessores(results[2] || []);
     } catch (erro) {
       confirm('Erro', erro.message || 'Erro ao carregar fichas');
     } finally {
@@ -77,6 +84,7 @@ export default function FichasScreen() {
   });
 
   function limparForm() {
+    setProfessorId('');
     setAlunoId('');
     setModalidadeId('');
     setDataAula('');
@@ -99,6 +107,7 @@ export default function FichasScreen() {
     setModalVisible(true);
     try {
       const detalhes = await getAula(ficha.id);
+      setProfessorId(String(detalhes.professor_id));
       setAlunoId(String(detalhes.aluno_id));
       setDataAula(detalhes.data_aula ? String(detalhes.data_aula).slice(0, 10) : '');
       setObservacao(detalhes.observacao || '');
@@ -157,6 +166,7 @@ export default function FichasScreen() {
 
   async function salvar() {
     const novosErros = {};
+    if (isAdmin && !professorId) novosErros.professorId = true;
     if (!alunoId) novosErros.alunoId = true;
     if (!modalidadeId) novosErros.modalidadeId = true;
     if (!dataAula) novosErros.dataAula = true;
@@ -178,6 +188,7 @@ export default function FichasScreen() {
         observacao: e.observacao || null,
       })),
     };
+    if (isAdmin) dados.professor_id = Number(professorId);
 
     setSalvando(true);
     try {
@@ -254,6 +265,24 @@ export default function FichasScreen() {
           <View style={styles.modalCard}>
             <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
               <Text style={styles.modalTitle}>{editId ? 'Editar Ficha' : 'Nova Ficha de Treino'}</Text>
+
+              {/* Professor (só para admin) */}
+              {isAdmin && (
+                <>
+                  <Text style={[styles.label, erros.professorId && styles.labelErro]}>Professor responsável</Text>
+                  <View style={styles.chipRow}>
+                    {professores.map((p) => {
+                      const ativo = String(p.id) === professorId;
+                      return (
+                        <Pressable key={p.id} onPress={() => setProfessorId(String(p.id))} style={[styles.chip, ativo && styles.chipAtivo, erros.professorId && styles.chipErro]}>
+                          <Text style={[styles.chipTexto, ativo && styles.chipTextoAtivo]} numberOfLines={1}>{p.nome}</Text>
+                        </Pressable>
+                      );
+                    })}
+                    {professores.length === 0 && <Text style={styles.chipVazio}>Nenhum professor cadastrado</Text>}
+                  </View>
+                </>
+              )}
 
               {/* Aluno */}
               <Text style={[styles.label, erros.alunoId && styles.labelErro]}>Aluno</Text>

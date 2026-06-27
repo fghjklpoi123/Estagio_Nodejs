@@ -13,10 +13,14 @@ const MENU_ITEMS = [
   { route: '/modalidades', label: 'Modalidades',    icon: 'dumbbell',  papel: ['admin'] },
   { route: '/exercicios',  label: 'Exercícios',     icon: 'dumbbell',  papel: ['professor', 'admin'] },
   { route: '/fichas',      label: 'Fichas de Treino',icon: 'clipboard', papel: ['professor', 'admin'] },
+  { route: '/presencas',   label: 'Presenças',       icon: 'calendar-check',papel: ['professor', 'admin'] },
   { route: '/planos',      label: 'Planos (Admin)', icon: 'list',      papel: ['admin'] },
+  { route: '/checkin',     label: 'Check-in',         icon: 'calendar-check',papel: ['aluno'] },
   { route: '/meus-treinos',label: 'Meus Treinos',    icon: 'clipboard', papel: ['aluno'] },
   { route: '/meus-planos', label: 'Meus Planos',    icon: 'ticket',    papel: ['aluno'] },
+  { route: '/financeiro',  label: 'Financeiro',      icon: 'wallet',    papel: ['admin'] },
   { route: '/relatorios',  label: 'Relatórios',     icon: 'file',      papel: ['admin'] },
+  { route: '/logs',        label: 'Auditoria',      icon: 'shield-checkmark', papel: ['admin'] },
 ];
 
 export default function SidebarMenu() {

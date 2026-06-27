@@ -16,9 +16,13 @@ const TITLES = {
   planos: 'Planos (Admin)',
   exercicios: 'Exercícios',
   fichas: 'Fichas de Treino',
+  presencas: 'Presenças',
+  checkin: 'Check-in',
   'meus-treinos': 'Meus Treinos',
   'meus-planos': 'Meus Planos',
+  financeiro: 'Financeiro',
   relatorios: 'Relatórios',
+  logs: 'Auditoria',
 };
 
 export default function DrawerLayout() {

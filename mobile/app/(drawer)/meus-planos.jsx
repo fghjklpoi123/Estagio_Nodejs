@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { confirm } from '../../src/confirm';
 import { useAuth } from '../../src/AuthContext';
-import { assinarPlano, cancelarInscricao, getAlunoModalidades, getModalidades, getPlanos } from '../../src/api';
+import { assinarPlano, cancelarPlano, getMeusPlanos, getModalidades, getPlanos } from '../../src/api';
 import { colors, radius } from '../../src/theme';
 
 // Recriação de front/planoFront/planos-aluno.html + planos-aluno.js.
@@ -30,14 +30,14 @@ export default function MeusPlanosScreen() {
   const carregar = useCallback(async () => {
     setCarregando(true);
     try {
-      const [planosData, modalidadesData, inscricoesData] = await Promise.all([
+      const [planosData, modalidadesData, meusData] = await Promise.all([
         getPlanos(),
         getModalidades(),
-        isAluno && alunoId ? getAlunoModalidades(alunoId) : Promise.resolve([]),
+        isAluno ? getMeusPlanos() : Promise.resolve([]),
       ]);
       setPlanos(planosData || []);
       setModalidadesMap(Object.fromEntries((modalidadesData || []).map((m) => [m.id, m.nome])));
-      setInscricoes(inscricoesData || []);
+      setInscricoes(meusData || []);
     } catch (erro) {
       setStatus({ tipo: 'error', texto: erro.message || 'Erro ao carregar planos' });
     } finally {
@@ -99,7 +99,7 @@ export default function MeusPlanosScreen() {
   async function cancelar(plano) {
     setAcaoEmAndamento(plano.id);
     try {
-      await cancelarInscricao(alunoId, plano.modalidade_id);
+      await cancelarPlano(plano.id);
       setStatus({ tipo: 'success', texto: 'Assinatura cancelada com sucesso!' });
       await carregar();
     } catch (erro) {
@@ -132,7 +132,7 @@ export default function MeusPlanosScreen() {
         <Text style={styles.empty}>Nenhum plano encontrado.</Text>
       ) : (
         planosFiltrados.map((plano) => {
-          const jaInscrito = inscricoes.some((insc) => insc.id === plano.modalidade_id);
+          const jaInscrito = inscricoes.some((insc) => insc.id === plano.id);
           const emAndamento = acaoEmAndamento === plano.id;
           return (
             <View key={plano.id} style={styles.planoCard}>

@@ -1,260 +1,278 @@
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import {
-  getRelatorioModalidadesPopulares,
-  getRelatorioAlunosSemModalidade,
-  getRelatorioAlunosPorModalidade,
-} from '../../src/api';
+import { getRelatorioDinamico } from '../../src/api';
 import { colors, radius } from '../../src/theme';
 
-// Recriação de front/relatorios/relatorios.html + relatorios.css.
-// No original, os 3 botões "(PDF)" geravam um PDF via jsPDF/autoTable — sem
-// equivalente direto em React Native sem libs nativas extras. Aqui o mesmo
-// dado retornado pelas rotas /api/relatorios/* é exibido direto nas tabelas
-// dos cards (que no HTML original ficavam sempre vazias por um bug no script).
+const ENTIDADES = [
+  { value: 'alunos', label: 'Alunos', icon: 'people' },
+  { value: 'financeiro', label: 'Financeiro', icon: 'wallet' },
+  { value: 'presencas', label: 'Presenças', icon: 'calendar' },
+  { value: 'planos', label: 'Planos', icon: 'list' },
+  { value: 'modalidades', label: 'Modalidades', icon: 'barbell' },
+];
 
-const COLUNAS_LABELS = {
-  nome: 'Nome',
-  total_alunos: 'Total',
-  professor: 'Professor',
-  status: 'Status',
-  cpf: 'CPF',
-  telefone: 'Telefone',
-  email: 'Email',
-  criado_em: 'Data',
-  obs: 'Observações',
-  situacao: 'Situação',
-  data_matricula: 'Data',
+const FILTROS_POR_ENTIDADE = {
+  alunos: [
+    { key: 'situacao', label: 'Situação', chips: ['', 'Ativo', 'Inativo'] },
+    { key: 'sexo', label: 'Sexo', chips: ['', 'M', 'F', 'O'] },
+    { key: 'sem_modalidade', label: 'Sem modalidade', chips: ['', 'true'], chipLabels: ['Todos', 'Somente sem'] },
+    { key: 'sem_plano', label: 'Sem plano', chips: ['', 'true'], chipLabels: ['Todos', 'Somente sem'] },
+  ],
+  financeiro: [
+    { key: 'tipo', label: 'Tipo', chips: ['', 'receita', 'despesa'] },
+    { key: 'ano', label: 'Ano', input: true, placeholder: '2026', keyboard: 'number-pad' },
+    { key: 'mes', label: 'Mês', input: true, placeholder: '1-12', keyboard: 'number-pad' },
+  ],
+  presencas: [
+    { key: 'ano', label: 'Ano', input: true, placeholder: '2026', keyboard: 'number-pad' },
+    { key: 'mes', label: 'Mês', input: true, placeholder: '1-12', keyboard: 'number-pad' },
+  ],
+  planos: [],
+  modalidades: [
+    { key: 'sem_alunos', label: 'Sem alunos', chips: ['', 'true'], chipLabels: ['Todas', 'Somente sem'] },
+  ],
 };
 
-function ReportTable({ columns, rows }) {
-  if (!rows.length) {
-    return <Text style={styles.semDados}>Nenhum dado</Text>;
-  }
-  const colWidth = Math.max(90, Math.floor(280 / columns.length));
-  return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      <View>
-        <View style={styles.tableRow}>
-          {columns.map((c) => (
-            <Text key={c} style={[styles.th, { width: colWidth }]}>
-              {(COLUNAS_LABELS[c] || c).toUpperCase()}
-            </Text>
-          ))}
-        </View>
-        {rows.map((r, i) => (
-          <View key={i} style={[styles.tableRow, styles.tableRowBody]}>
-            {columns.map((c) => (
-              <Text key={c} style={[styles.td, { width: colWidth }]} numberOfLines={2}>
-                {String(r[c] ?? '')}
-              </Text>
-            ))}
-          </View>
-        ))}
-      </View>
-    </ScrollView>
-  );
-}
+const COLUNAS_POR_ENTIDADE = {
+  alunos: [
+    { key: 'nome', label: 'Nome' },
+    { key: 'cpf', label: 'CPF' },
+    { key: 'email', label: 'E-mail' },
+    { key: 'situacao', label: 'Situação' },
+    { key: 'sexo', label: 'Sexo' },
+    { key: 'modalidades', label: 'Modalidades' },
+    { key: 'total_planos', label: 'Planos' },
+  ],
+  financeiro: [
+    { key: 'tipo', label: 'Tipo' },
+    { key: 'categoria', label: 'Categoria' },
+    { key: 'quantidade', label: 'Qtd' },
+    { key: 'total', label: 'Total (R$)', format: (v) => Number(v).toFixed(2).replace('.', ',') },
+  ],
+  presencas: [
+    { key: 'aluno_nome', label: 'Aluno' },
+    { key: 'total_checkins', label: 'Check-ins' },
+    { key: 'primeiro_checkin', label: 'Primeiro', format: formatarData },
+    { key: 'ultimo_checkin', label: 'Último', format: formatarData },
+  ],
+  planos: [
+    { key: 'descricao', label: 'Plano' },
+    { key: 'modalidade', label: 'Modalidade' },
+    { key: 'preco', label: 'Preço (R$)', format: (v) => Number(v).toFixed(2).replace('.', ',') },
+    { key: 'total_assinantes', label: 'Assinantes' },
+    { key: 'receita_estimada', label: 'Receita est. (R$)', format: (v) => Number(v).toFixed(2).replace('.', ',') },
+  ],
+  modalidades: [
+    { key: 'nome', label: 'Nome' },
+    { key: 'total_alunos', label: 'Alunos' },
+    { key: 'total_exercicios', label: 'Exercícios' },
+    { key: 'professores', label: 'Professores' },
+  ],
+};
 
-function ReportCard({ title, status, onGerar, children }) {
-  return (
-    <View style={styles.card}>
-      <Text style={styles.cardTitle}>{title}</Text>
-      <Pressable style={styles.btnPrimary} onPress={onGerar} disabled={status === 'loading'}>
-        {status === 'loading' ? (
-          <ActivityIndicator color="#fff" size="small" />
-        ) : (
-          <>
-            <Ionicons name="bar-chart-outline" size={16} color="#fff" />
-            <Text style={styles.btnPrimaryTexto}>Gerar relatório</Text>
-          </>
-        )}
-      </Pressable>
-      {status === 'error' && <Text style={styles.erroTexto}>Erro ao gerar relatório.</Text>}
-      {status === 'done' && <View style={styles.tableWrapper}>{children}</View>}
-    </View>
-  );
+function formatarData(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  return `${String(dt.getDate()).padStart(2, '0')}/${String(dt.getMonth() + 1).padStart(2, '0')}/${dt.getFullYear()}`;
 }
 
 export default function RelatoriosScreen() {
-  const [modPop, setModPop] = useState({ status: 'idle', rows: [] });
-  const [alunosSem, setAlunosSem] = useState({ status: 'idle', rows: [] });
-  const [alunosPorMod, setAlunosPorMod] = useState({ status: 'idle', sections: [] });
+  const [entidade, setEntidade] = useState('');
+  const [filtros, setFiltros] = useState({});
+  const [resultado, setResultado] = useState(null);
+  const [carregando, setCarregando] = useState(false);
 
-  async function carregarModalidadesPopulares() {
-    setModPop({ status: 'loading', rows: [] });
+  function selecionarEntidade(ent) {
+    setEntidade(ent);
+    setFiltros({});
+    setResultado(null);
+  }
+
+  function setFiltro(key, value) {
+    setFiltros((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function gerarRelatorio() {
+    if (!entidade) return;
+    setCarregando(true);
     try {
-      const data = await getRelatorioModalidadesPopulares();
-      const rows = (data.modalidades || []).map((m) => ({
-        nome: m.nome,
-        total_alunos: m.total_alunos,
-        professor: m.professor ? m.professor.nome : 'Nenhum',
-        status: m.status || 'Ativa',
-      }));
-      rows.push({ nome: 'TOTAL GERAL', total_alunos: data.total_geral || 0, professor: '', status: '' });
-      setModPop({ status: 'done', rows });
-    } catch {
-      setModPop({ status: 'error', rows: [] });
+      const data = await getRelatorioDinamico({ entidade, ...filtros });
+      setResultado(data);
+    } catch (erro) {
+      setResultado({ erro: erro.message || 'Erro ao gerar relatório' });
+    } finally {
+      setCarregando(false);
     }
   }
 
-  async function carregarAlunosSemModalidade() {
-    setAlunosSem({ status: 'loading', rows: [] });
-    try {
-      const data = await getRelatorioAlunosSemModalidade();
-      const rows = (data || []).map((a) => ({
-        nome: a.nome,
-        cpf: a.cpf,
-        telefone: a.telefone,
-        email: a.email,
-        criado_em: a.criado_em,
-        obs: a.obs,
-      }));
-      setAlunosSem({ status: 'done', rows });
-    } catch {
-      setAlunosSem({ status: 'error', rows: [] });
-    }
-  }
-
-  async function carregarAlunosPorModalidade() {
-    setAlunosPorMod({ status: 'loading', sections: [] });
-    try {
-      const data = await getRelatorioAlunosPorModalidade();
-      const sections = (data || []).map((item) => ({
-        title: `${item.modalidade.nome} (${(item.alunos || []).length} aluno(s))`,
-        rows: (item.alunos || []).map((a) => ({
-          nome: a.nome,
-          cpf: a.cpf,
-          telefone: a.telefone,
-          situacao: a.situacao,
-          data_matricula: a.data_matricula,
-        })),
-      }));
-      setAlunosPorMod({ status: 'done', sections });
-    } catch {
-      setAlunosPorMod({ status: 'error', sections: [] });
-    }
-  }
+  const filtrosConfig = FILTROS_POR_ENTIDADE[entidade] || [];
+  const colunas = COLUNAS_POR_ENTIDADE[entidade] || [];
+  const dados = resultado?.dados || [];
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Text style={styles.heading}>Relatórios</Text>
 
-      <ReportCard title="Modalidades Populares (PDF)" status={modPop.status} onGerar={carregarModalidadesPopulares}>
-        <ReportTable columns={['nome', 'total_alunos', 'professor', 'status']} rows={modPop.rows} />
-      </ReportCard>
+      <Text style={styles.label}>O que deseja consultar?</Text>
+      <View style={styles.entidadeRow}>
+        {ENTIDADES.map((e) => {
+          const ativo = entidade === e.value;
+          return (
+            <Pressable key={e.value} onPress={() => selecionarEntidade(e.value)} style={[styles.entidadeChip, ativo && styles.entidadeChipAtivo]}>
+              <Ionicons name={e.icon} size={20} color={ativo ? '#fff' : colors.blue600} />
+              <Text style={[styles.entidadeTexto, ativo && styles.entidadeTextoAtivo]}>{e.label}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
 
-      <ReportCard title="Alunos sem Modalidade (PDF)" status={alunosSem.status} onGerar={carregarAlunosSemModalidade}>
-        <ReportTable columns={['nome', 'cpf', 'telefone', 'email', 'criado_em', 'obs']} rows={alunosSem.rows} />
-      </ReportCard>
-
-      <ReportCard title="Alunos por Modalidade (PDF)" status={alunosPorMod.status} onGerar={carregarAlunosPorModalidade}>
-        {alunosPorMod.sections.length === 0 ? (
-          <Text style={styles.semDados}>Nenhum dado</Text>
-        ) : (
-          alunosPorMod.sections.map((s, i) => (
-            <View key={i} style={styles.section}>
-              <Text style={styles.sectionTitle}>{s.title}</Text>
-              <ReportTable columns={['nome', 'cpf', 'telefone', 'situacao', 'data_matricula']} rows={s.rows} />
+      {entidade && filtrosConfig.length > 0 && (
+        <View style={styles.filtrosBox}>
+          <Text style={styles.filtrosTitulo}>Filtros</Text>
+          {filtrosConfig.map((f) => (
+            <View key={f.key} style={styles.filtroItem}>
+              <Text style={styles.filtroLabel}>{f.label}</Text>
+              {f.chips ? (
+                <View style={styles.chipRow}>
+                  {f.chips.map((chip, i) => {
+                    const ativo = (filtros[f.key] || '') === chip;
+                    const chipLabel = f.chipLabels ? f.chipLabels[i] : (chip || 'Todos');
+                    return (
+                      <Pressable key={chip} onPress={() => setFiltro(f.key, chip)} style={[styles.chip, ativo && styles.chipAtivo]}>
+                        <Text style={[styles.chipTexto, ativo && styles.chipTextoAtivo]}>{chipLabel}</Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              ) : f.input ? (
+                <TextInput
+                  style={styles.filtroInput}
+                  placeholder={f.placeholder}
+                  placeholderTextColor="#999"
+                  value={filtros[f.key] || ''}
+                  onChangeText={(v) => setFiltro(f.key, v)}
+                  keyboardType={f.keyboard || 'default'}
+                />
+              ) : null}
             </View>
-          ))
-        )}
-      </ReportCard>
+          ))}
+        </View>
+      )}
+
+      {entidade && (
+        <Pressable style={styles.btnGerar} onPress={gerarRelatorio} disabled={carregando}>
+          {carregando ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <>
+              <Ionicons name="search" size={18} color="#fff" />
+              <Text style={styles.btnGerarTexto}>Gerar Relatório</Text>
+            </>
+          )}
+        </Pressable>
+      )}
+
+      {resultado && !resultado.erro && (
+        <View style={styles.resultadoBox}>
+          {resultado.total != null && (
+            <Text style={styles.resultadoResumo}>{resultado.total} registro(s) encontrado(s)</Text>
+          )}
+          {resultado.resumo && (
+            <View style={styles.resumoRow}>
+              <View style={[styles.resumoCard, { backgroundColor: colors.planoPreco }]}>
+                <Text style={styles.resumoValor}>R$ {Number(resultado.resumo.total_receitas).toFixed(2).replace('.', ',')}</Text>
+                <Text style={styles.resumoLabel}>Receitas</Text>
+              </View>
+              <View style={[styles.resumoCard, { backgroundColor: colors.deleteBtn }]}>
+                <Text style={styles.resumoValor}>R$ {Number(resultado.resumo.total_despesas).toFixed(2).replace('.', ',')}</Text>
+                <Text style={styles.resumoLabel}>Despesas</Text>
+              </View>
+              <View style={[styles.resumoCard, { backgroundColor: resultado.resumo.balanco >= 0 ? colors.blue600 : '#c0392b' }]}>
+                <Text style={styles.resumoValor}>R$ {Number(resultado.resumo.balanco).toFixed(2).replace('.', ',')}</Text>
+                <Text style={styles.resumoLabel}>Balanço</Text>
+              </View>
+            </View>
+          )}
+          {resultado.total_checkins != null && (
+            <Text style={styles.resultadoResumo}>Total de check-ins: {resultado.total_checkins}</Text>
+          )}
+
+          {dados.length > 0 ? (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabelaScroll}>
+              <View>
+                <View style={styles.tabelaHeader}>
+                  {colunas.map((col) => (
+                    <Text key={col.key} style={styles.th}>{col.label}</Text>
+                  ))}
+                </View>
+                {dados.map((row, i) => (
+                  <View key={i} style={[styles.tabelaRow, i % 2 === 0 && styles.tabelaRowAlt]}>
+                    {colunas.map((col) => {
+                      const val = row[col.key];
+                      const texto = col.format ? col.format(val) : (val != null ? String(val) : '—');
+                      return <Text key={col.key} style={styles.td} numberOfLines={2}>{texto}</Text>;
+                    })}
+                  </View>
+                ))}
+              </View>
+            </ScrollView>
+          ) : (
+            <Text style={styles.empty}>Nenhum dado encontrado com esses filtros.</Text>
+          )}
+        </View>
+      )}
+
+      {resultado?.erro && (
+        <View style={styles.erroBox}>
+          <Text style={styles.erroTexto}>{resultado.erro}</Text>
+        </View>
+      )}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.pageBg,
-  },
-  content: {
-    padding: 24,
-  },
-  heading: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.textDark,
-    marginBottom: 16,
-  },
-  card: {
-    backgroundColor: colors.cardBg,
-    borderRadius: radius.lg,
-    padding: 16,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    elevation: 2,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.textDark,
-    marginBottom: 10,
-  },
-  btnPrimary: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: colors.blue600,
-    borderRadius: radius.sm,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    alignSelf: 'flex-start',
-  },
-  btnPrimaryTexto: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 14,
-  },
-  erroTexto: {
-    color: colors.erroTexto,
-    marginTop: 10,
-    fontSize: 13,
-  },
-  tableWrapper: {
-    marginTop: 12,
-  },
-  semDados: {
-    marginTop: 12,
-    color: colors.muted,
-    fontSize: 13,
-  },
-  section: {
-    marginBottom: 14,
-  },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: colors.textDark,
-    marginBottom: 6,
-  },
-  tableRow: {
-    flexDirection: 'row',
-  },
-  tableRowBody: {
-    borderTopWidth: 1,
-    borderTopColor: '#f1f3f6',
-  },
-  th: {
-    textTransform: 'uppercase',
-    fontSize: 11,
-    fontWeight: '700',
-    color: colors.muted,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  td: {
-    fontSize: 13,
-    color: '#273444',
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-  },
+  container: { flex: 1, backgroundColor: colors.pageBg },
+  content: { padding: 24 },
+  heading: { fontSize: 28, fontWeight: '700', color: colors.textDark, marginBottom: 20 },
+  label: { fontWeight: '600', color: '#333', fontSize: 14, marginBottom: 10 },
+
+  entidadeRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
+  entidadeChip: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 12, paddingHorizontal: 16, borderRadius: radius.sm, borderWidth: 2, borderColor: colors.blue600, backgroundColor: '#fff' },
+  entidadeChipAtivo: { backgroundColor: colors.blue600 },
+  entidadeTexto: { fontSize: 14, fontWeight: '700', color: colors.blue600 },
+  entidadeTextoAtivo: { color: '#fff' },
+
+  filtrosBox: { backgroundColor: '#fff', borderRadius: radius.lg, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: '#eee' },
+  filtrosTitulo: { fontSize: 15, fontWeight: '700', color: colors.textDark, marginBottom: 12 },
+  filtroItem: { marginBottom: 12 },
+  filtroLabel: { fontSize: 13, fontWeight: '600', color: colors.muted, marginBottom: 6 },
+  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  chip: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 6, borderWidth: 1, borderColor: '#ccc', backgroundColor: '#f9f9f9' },
+  chipAtivo: { backgroundColor: colors.blue600, borderColor: colors.blue600 },
+  chipTexto: { color: '#333', fontWeight: '600', fontSize: 12 },
+  chipTextoAtivo: { color: '#fff' },
+  filtroInput: { borderWidth: 1, borderColor: '#ddd', borderRadius: radius.sm, paddingVertical: 8, paddingHorizontal: 12, fontSize: 14, backgroundColor: '#fff', color: '#333' },
+
+  btnGerar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: colors.blue600, borderRadius: radius.sm, paddingVertical: 14, marginBottom: 20 },
+  btnGerarTexto: { color: '#fff', fontWeight: '700', fontSize: 16 },
+
+  resultadoBox: { marginTop: 4 },
+  resultadoResumo: { fontSize: 14, fontWeight: '600', color: colors.textDark, marginBottom: 12 },
+  resumoRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },
+  resumoCard: { flex: 1, borderRadius: radius.sm, padding: 14, alignItems: 'center' },
+  resumoValor: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  resumoLabel: { color: 'rgba(255,255,255,0.85)', fontSize: 11, marginTop: 4 },
+
+  tabelaScroll: { marginTop: 8 },
+  tabelaHeader: { flexDirection: 'row', borderBottomWidth: 2, borderBottomColor: colors.blue600 },
+  th: { width: 130, fontSize: 11, fontWeight: '700', color: colors.blue600, textTransform: 'uppercase', paddingVertical: 10, paddingHorizontal: 8 },
+  tabelaRow: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#eee' },
+  tabelaRowAlt: { backgroundColor: '#f9fafb' },
+  td: { width: 130, fontSize: 13, color: '#333', paddingVertical: 10, paddingHorizontal: 8 },
+
+  empty: { color: colors.muted, fontSize: 13, fontStyle: 'italic', marginTop: 8 },
+  erroBox: { backgroundColor: colors.erroBg, borderRadius: radius.sm, padding: 14, marginTop: 12 },
+  erroTexto: { color: colors.erroTexto, fontWeight: '600', textAlign: 'center' },
 });
