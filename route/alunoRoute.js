@@ -3,6 +3,7 @@ const {inserir, listar, buscarUm, update, remove, getPlano} = require('../contro
 const express = require('express');
 const router = express.Router();
 
+
 router.get('/alunos', listar);
 router.get('/alunos/:id', buscarUm);
 router.get('/alunos/:id/plano', getPlano);

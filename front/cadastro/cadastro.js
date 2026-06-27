@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const telefoneClean = telefoneInput.value.replace(/\D/g, '');
 
     const dados = {
-      name: nomeInput.value.trim(),
+      nome: nomeInput.value.trim(),
       email: emailInput.value.trim(),
       cpf: cpfClean,
       senha: senhaInput.value,
