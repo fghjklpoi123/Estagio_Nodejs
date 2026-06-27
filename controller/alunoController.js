@@ -32,7 +32,7 @@ exports.buscarUm = async (req, res) => {
 exports.inserir = async (req, res) => {
     console.log(req.body)
     try {
-        const { name, cpf, telefone, sexo, data_nascimento, email, senha, endereco, situacao, obs } = req.body;
+        const { nome, cpf, telefone, sexo, data_nascimento, email, senha, endereco, situacao, obs } = req.body;
         if (!name || name.trim() === '') {
             return res.status(400).json({
                 error: 'Nome obrigatorio'
