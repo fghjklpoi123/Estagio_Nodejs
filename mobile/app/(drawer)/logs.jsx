@@ -28,6 +28,7 @@ function rotaResumida(rota) {
 }
 
 export default function LogsScreen() {
+  const styles = makeStyles();
   const [logs, setLogs] = useState([]);
   const [carregando, setCarregando] = useState(true);
 
@@ -152,25 +153,25 @@ export default function LogsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.pageBg },
   content: { padding: 24 },
   heading: { fontSize: 28, fontWeight: '700', color: colors.textDark, marginBottom: 16 },
 
   filtros: { gap: 10, marginBottom: 16 },
-  busca: { borderWidth: 2, borderColor: '#ddd', borderRadius: radius.sm, paddingVertical: 10, paddingHorizontal: 14, fontSize: 15, backgroundColor: '#fff', color: '#333' },
+  busca: { borderWidth: 2, borderColor: colors.inputBorder, borderRadius: radius.sm, paddingVertical: 10, paddingHorizontal: 14, fontSize: 15, backgroundColor: colors.cardBg, color: colors.textDark },
   filtroRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, alignItems: 'center' },
   limparBtn: { padding: 6 },
-  chip: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 6, borderWidth: 1, borderColor: '#ccc', backgroundColor: '#fff' },
+  chip: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 6, borderWidth: 1, borderColor: colors.inputBorder, backgroundColor: colors.cardBg },
   chipAtivo: { backgroundColor: colors.blue600, borderColor: colors.blue600 },
-  chipTexto: { color: '#333', fontWeight: '600', fontSize: 12 },
+  chipTexto: { color: colors.textDark, fontWeight: '600', fontSize: 12 },
   chipTextoAtivo: { color: '#fff' },
 
   contagem: { fontSize: 12, color: colors.muted, marginBottom: 10 },
   loading: { marginTop: 16 },
   empty: { color: colors.muted, fontSize: 13, fontStyle: 'italic' },
 
-  logItem: { backgroundColor: '#fff', borderRadius: radius.sm, padding: 12, marginBottom: 6, borderWidth: 1, borderColor: '#eee' },
+  logItem: { backgroundColor: colors.cardBg, borderRadius: radius.sm, padding: 12, marginBottom: 6, borderWidth: 1, borderColor: colors.inputBorder },
   logTop: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
   metodoBadge: { paddingVertical: 2, paddingHorizontal: 8, borderRadius: 4 },
   metodoTexto: { color: '#fff', fontSize: 11, fontWeight: '700' },

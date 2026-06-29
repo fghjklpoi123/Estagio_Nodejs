@@ -6,6 +6,7 @@ import { colors, radius } from '../theme';
 // de front/planoFront/plano.css (mesmo padrão usado nas outras páginas admin).
 
 export function FormField({ label, erro, children }) {
+  const styles = makeStyles();
   return (
     <View style={styles.group}>
       <Text style={[styles.label, erro && styles.labelErro]}>{label}</Text>
@@ -15,6 +16,7 @@ export function FormField({ label, erro, children }) {
 }
 
 export function TextField({ label, erro, style, ...props }) {
+  const styles = makeStyles();
   return (
     <FormField label={label} erro={erro}>
       <TextInput
@@ -28,6 +30,7 @@ export function TextField({ label, erro, style, ...props }) {
 }
 
 export function TextAreaField({ label, erro, style, ...props }) {
+  const styles = makeStyles();
   return (
     <FormField label={label} erro={erro}>
       <TextInput
@@ -43,6 +46,7 @@ export function TextAreaField({ label, erro, style, ...props }) {
 }
 
 export function SelectField({ label, erro, value, onChange, options, placeholder = 'Nenhuma opção disponível' }) {
+  const styles = makeStyles();
   return (
     <FormField label={label} erro={erro}>
       <View style={styles.chipRow}>
@@ -66,14 +70,14 @@ export function SelectField({ label, erro, value, onChange, options, placeholder
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   group: {
     marginTop: 10,
     gap: 6,
   },
   label: {
     fontWeight: '600',
-    color: '#333',
+    color: colors.textDark,
     fontSize: 14,
   },
   labelErro: {
@@ -86,7 +90,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
     borderWidth: 1,
     borderColor: colors.inputBorder,
-    backgroundColor: '#fff',
+    backgroundColor: colors.inputBg,
     fontSize: 14,
     color: colors.textDark,
   },
@@ -110,7 +114,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
     borderWidth: 1,
     borderColor: colors.inputBorder,
-    backgroundColor: '#fff',
+    backgroundColor: colors.inputBg,
   },
   chipAtiva: {
     backgroundColor: colors.blue600,

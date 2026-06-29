@@ -21,6 +21,7 @@ function agruparPorModalidade(fichas) {
 }
 
 export default function MeusTreinosScreen() {
+  const styles = makeStyles();
   const { session } = useAuth();
   const alunoId = session?.id;
 
@@ -182,7 +183,7 @@ export default function MeusTreinosScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.pageBg },
   content: { padding: 24 },
   heading: { fontSize: 28, fontWeight: '700', color: colors.textDark, marginBottom: 20 },
@@ -193,7 +194,7 @@ const styles = StyleSheet.create({
   vazioTexto: { fontSize: 16, fontWeight: '600', color: '#999' },
   vazioSub: { fontSize: 13, color: '#bbb', textAlign: 'center' },
 
-  grupo: { marginBottom: 20, backgroundColor: '#fff', borderRadius: radius.lg, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 1, overflow: 'hidden' },
+  grupo: { marginBottom: 20, backgroundColor: colors.cardBg, borderRadius: radius.lg, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 1, overflow: 'hidden' },
   grupoHeader: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 10, backgroundColor: '#fafbfc', borderBottomWidth: 1, borderBottomColor: '#eee' },
   grupoHeaderLeft: { flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 },
   grupoTitulo: { fontSize: 16, fontWeight: '700', color: colors.textDark },
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
   fichaVer: { fontSize: 12, color: colors.blue600, fontWeight: '600', marginTop: 4 },
 
   overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'center', alignItems: 'center', padding: 16 },
-  modalCard: { width: '100%', maxWidth: 500, maxHeight: '90%', backgroundColor: '#fff', borderRadius: radius.lg, padding: 20 },
+  modalCard: { width: '100%', maxWidth: 500, maxHeight: '90%', backgroundColor: colors.cardBg, borderRadius: radius.lg, padding: 20 },
   modalTitle: { fontSize: 20, fontWeight: '700', color: colors.textDark, marginBottom: 16 },
 
   detalheInfo: { marginBottom: 16, gap: 4 },
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
 
   exerciciosTitulo: { fontSize: 15, fontWeight: '700', color: colors.textDark, marginBottom: 10 },
 
-  exCard: { backgroundColor: '#f9fafb', borderRadius: radius.sm, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: '#eee' },
+  exCard: { backgroundColor: '#f9fafb', borderRadius: radius.sm, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: colors.inputBorder },
   exNome: { fontSize: 15, fontWeight: '700', color: colors.textDark, marginBottom: 8 },
   exCampos: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   exTag: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#edf2ff', paddingVertical: 4, paddingHorizontal: 8, borderRadius: 6 },

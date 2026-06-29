@@ -21,6 +21,7 @@ import { colors, radius } from '../src/theme';
 // O card de duas colunas (40% imagem / 60% formulário, 900px) era pensado pra
 // desktop; em formato mobile vira uma coluna só, com a logo no topo.
 export default function LoginScreen() {
+  const styles = makeStyles();
   const router = useRouter();
   const { login } = useAuth();
 
@@ -146,7 +147,7 @@ export default function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: colors.pageBg,
@@ -232,7 +233,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.inputBorder,
-    backgroundColor: '#fff',
+    backgroundColor: colors.cardBg,
     fontSize: 16,
     color: colors.textDark,
   },

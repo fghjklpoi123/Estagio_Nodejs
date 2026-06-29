@@ -13,6 +13,7 @@ const STATS = [
 ];
 
 export default function HomeScreen() {
+  const styles = makeStyles();
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Text style={styles.heading}>Bem-vindo!</Text>
@@ -35,7 +36,7 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.pageBg,

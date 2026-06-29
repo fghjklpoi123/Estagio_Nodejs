@@ -28,6 +28,7 @@ const SEXO_OPCOES = [
 ];
 
 function Campo({ label, erro, style, ...inputProps }) {
+  const styles = makeStyles();
   return (
     <View style={[styles.formGroup, style]}>
       <Text style={[styles.label, erro && styles.labelErro]}>{label}</Text>
@@ -42,6 +43,7 @@ function Campo({ label, erro, style, ...inputProps }) {
 }
 
 export default function CadastroScreen() {
+  const styles = makeStyles();
   const router = useRouter();
 
   const [nome, setNome] = useState('');
@@ -267,7 +269,7 @@ export default function CadastroScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: colors.pageBg,
@@ -358,7 +360,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.inputBorder,
-    backgroundColor: '#fff',
+    backgroundColor: colors.cardBg,
     fontSize: 16,
     color: colors.textDark,
   },
@@ -376,7 +378,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.inputBorder,
-    backgroundColor: '#fff',
+    backgroundColor: colors.cardBg,
     alignItems: 'center',
   },
   sexoOpcaoAtiva: {

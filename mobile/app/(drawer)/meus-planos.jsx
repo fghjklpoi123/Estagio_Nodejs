@@ -15,6 +15,7 @@ function formatarValor(valor) {
 }
 
 export default function MeusPlanosScreen() {
+  const styles = makeStyles();
   const { session } = useAuth();
   const isAluno = session && session.tipo === 'aluno';
   const alunoId = session?.id;
@@ -164,7 +165,7 @@ export default function MeusPlanosScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.pageBg,
@@ -180,13 +181,13 @@ const styles = StyleSheet.create({
   },
   busca: {
     borderWidth: 2,
-    borderColor: '#ddd',
+    borderColor: colors.inputBorder,
     borderRadius: radius.sm,
     paddingVertical: 10,
     paddingHorizontal: 14,
     fontSize: 15,
-    backgroundColor: '#fff',
-    color: '#333',
+    backgroundColor: colors.cardBg,
+    color: colors.textDark,
     marginBottom: 16,
   },
   statusMsg: {
@@ -232,9 +233,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   planoCard: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.cardBg,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: colors.inputBorder,
     borderRadius: radius.sm,
     padding: 20,
     marginBottom: 15,

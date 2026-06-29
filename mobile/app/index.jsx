@@ -6,6 +6,7 @@ import { colors } from '../src/theme';
 // Equivalente a front/js/authGuard.js: decide se manda pra Home (sessão presente
 // no AsyncStorage, no lugar do localStorage do navegador) ou pro Login.
 export default function Index() {
+  const styles = makeStyles();
   const { session } = useAuth();
 
   if (session === null) {
@@ -19,7 +20,7 @@ export default function Index() {
   return <Redirect href={session ? '/home' : '/login'} />;
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   loading: {
     flex: 1,
     alignItems: 'center',

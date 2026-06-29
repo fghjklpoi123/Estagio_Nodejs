@@ -71,6 +71,10 @@ export const loginAdmin = (email, senha) =>
 export const cadastrarAluno = (dados) =>
   request('/alunos', { method: 'POST', body: JSON.stringify(dados) });
 
+// --- Feriados (BrasilAPI) ---
+export const getFeriados = (ano) => request(`/feriados${ano ? `?ano=${ano}` : ''}`);
+export const verificarFeriado = (data) => request(`/feriados/${data}`);
+
 // --- Alunos ---
 export const getAlunos = () => request('/alunos');
 export const getAluno = (id) => request(`/alunos/${id}`);

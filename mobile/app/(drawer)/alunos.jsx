@@ -61,6 +61,7 @@ function calcularIdade(dataNascimento) {
 // Card individual: busca plano + modalidades do aluno de forma assíncrona,
 // igual ao enrichCards() de alunos.js (estado de carregando/erro/vazio).
 function AlunoCard({ aluno, onEdit, onDelete }) {
+  const styles = makeStyles();
   const [planoTexto, setPlanoTexto] = useState('Carregando plano...');
 
   useEffect(() => {
@@ -118,6 +119,7 @@ function AlunoCard({ aluno, onEdit, onDelete }) {
 }
 
 export default function AlunosScreen() {
+  const styles = makeStyles();
   const [alunos, setAlunos] = useState([]);
   const [busca, setBusca] = useState('');
   const [filtroSituacao, setFiltroSituacao] = useState('');
@@ -129,7 +131,6 @@ export default function AlunosScreen() {
   const [form, setForm] = useState(FORM_VAZIO);
   const [erros, setErros] = useState({});
   const [salvando, setSalvando] = useState(false);
-
   const carregar = useCallback(async () => {
     setCarregando(true);
     try {
@@ -411,7 +412,7 @@ export default function AlunosScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.pageBg,
@@ -430,13 +431,13 @@ const styles = StyleSheet.create({
   },
   busca: {
     borderWidth: 2,
-    borderColor: '#ddd',
+    borderColor: colors.inputBorder,
     borderRadius: radius.sm,
     paddingVertical: 10,
     paddingHorizontal: 14,
     fontSize: 15,
-    backgroundColor: '#fff',
-    color: '#333',
+    backgroundColor: colors.cardBg,
+    color: colors.textDark,
   },
   situacaoRow: {
     flexDirection: 'row',
@@ -448,15 +449,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: radius.sm,
     borderWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor: '#fff',
+    borderColor: colors.inputBorder,
+    backgroundColor: colors.cardBg,
   },
   filtroChipAtivo: {
     backgroundColor: colors.blue600,
     borderColor: colors.blue600,
   },
   filtroChipTexto: {
-    color: '#333',
+    color: colors.textDark,
     fontWeight: '600',
     fontSize: 13,
   },
@@ -495,7 +496,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexBasis: 260,
     minWidth: 260,
-    backgroundColor: '#fff',
+    backgroundColor: colors.cardBg,
     borderRadius: radius.lg,
     padding: 20,
     paddingTop: 50,

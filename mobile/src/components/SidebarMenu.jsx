@@ -1,9 +1,10 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { FontAwesome6 } from '@expo/vector-icons';
+import { FontAwesome6, Ionicons } from '@expo/vector-icons';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, usePathname } from 'expo-router';
 import { useAuth } from '../AuthContext';
+import { useTheme } from '../ThemeContext';
 import { colors } from '../theme';
 
 const MENU_ITEMS = [
@@ -24,10 +25,12 @@ const MENU_ITEMS = [
 ];
 
 export default function SidebarMenu() {
+  const styles = makeStyles();
   const router = useRouter();
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
   const { session, logout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
 
   const tipo = session?.tipo;
   const itensVisiveis = MENU_ITEMS.filter((item) => item.papel === null || (Array.isArray(item.papel) && item.papel.includes(tipo)));
@@ -39,14 +42,14 @@ export default function SidebarMenu() {
 
   return (
     <LinearGradient
-      colors={[colors.blue700, colors.blue600]}
+      colors={isDark ? ['#1e293b', '#0f172a'] : [colors.blue700, colors.blue600]}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
-      style={styles.sidebar}
+      style={{ flex: 1 }}
     >
       <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + 12 }]}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ padding: 12, paddingTop: insets.top + 12 }}
       >
         <View style={styles.logoRow}>
           <Image source={require('../../assets/images/logo.png')} style={styles.logoImg} />
@@ -65,7 +68,7 @@ export default function SidebarMenu() {
                 pressed && !ativo && styles.menuItemPressionado,
               ]}
             >
-              <FontAwesome6 name={item.icon} size={18} color={ativo ? colors.sidebarTextActive : colors.sidebarText} />
+              <FontAwesome6 name={item.icon} size={18} color={ativo ? '#fff' : colors.sidebarText} />
               <Text style={[styles.menuLabel, ativo && styles.menuLabelAtivo]}>{item.label}</Text>
             </Pressable>
           );
@@ -73,10 +76,11 @@ export default function SidebarMenu() {
       </ScrollView>
 
       <View style={[styles.menuBottom, { paddingBottom: insets.bottom + 12 }]}>
-        <Pressable
-          onPress={handleLogout}
-          style={({ pressed }) => [styles.menuItem, pressed && styles.menuItemPressionado]}
-        >
+        <Pressable onPress={toggleTheme} style={({ pressed }) => [styles.menuItem, pressed && styles.menuItemPressionado]}>
+          <Ionicons name={isDark ? 'sunny' : 'moon'} size={18} color={colors.sidebarText} />
+          <Text style={styles.menuLabel}>{isDark ? 'Modo claro' : 'Modo escuro'}</Text>
+        </Pressable>
+        <Pressable onPress={handleLogout} style={({ pressed }) => [styles.menuItem, pressed && styles.menuItemPressionado]}>
           <FontAwesome6 name="right-from-bracket" size={18} color={colors.sidebarText} />
           <Text style={styles.menuLabel}>Sair</Text>
         </Pressable>
@@ -85,16 +89,7 @@ export default function SidebarMenu() {
   );
 }
 
-const styles = StyleSheet.create({
-  sidebar: {
-    flex: 1,
-  },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 12,
-  },
+const makeStyles = () => StyleSheet.create({
   logoRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -130,11 +125,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.18)',
   },
   menuLabel: {
-    color: colors.sidebarText,
+    color: '#dce7ff',
     fontSize: 15,
   },
   menuLabelAtivo: {
-    color: colors.sidebarTextActive,
+    color: '#fff',
     fontWeight: '700',
   },
   menuBottom: {

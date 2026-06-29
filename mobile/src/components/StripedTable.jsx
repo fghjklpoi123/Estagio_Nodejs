@@ -6,6 +6,7 @@ import { colors, radius } from '../theme';
 // maiúsculas, linhas zebradas e coluna final de ações (editar/excluir).
 // Colunas largas usam scroll horizontal, já que <table> não existe em RN.
 export default function StripedTable({ columns, data, keyExtractor, onEdit, onDelete, emptyText = 'Nenhum registro encontrado' }) {
+  const styles = makeStyles();
   if (!data.length) {
     return <Text style={styles.empty}>{emptyText}</Text>;
   }
@@ -41,7 +42,7 @@ export default function StripedTable({ columns, data, keyExtractor, onEdit, onDe
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   empty: {
     color: colors.muted,
     fontSize: 13,
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
   },
   td: {
     fontSize: 13,
-    color: '#333',
+    color: colors.textDark,
     paddingVertical: 10,
     paddingHorizontal: 8,
   },

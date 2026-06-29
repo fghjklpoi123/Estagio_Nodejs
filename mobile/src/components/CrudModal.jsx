@@ -5,6 +5,7 @@ import { colors, radius } from '../theme';
 // front/planoFront/plano.css — usado pelos modais de criar/editar em todas
 // as páginas admin (Planos, Alunos, Treinadores, Modalidades).
 export default function CrudModal({ visible, title, onClose, onSalvar, salvando, children }) {
+  const styles = makeStyles();
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
@@ -27,7 +28,7 @@ export default function CrudModal({ visible, title, onClose, onSalvar, salvando,
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.45)',
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 500,
     maxHeight: '85%',
-    backgroundColor: '#fff',
+    backgroundColor: colors.cardBg,
     borderRadius: radius.lg,
     padding: 16,
   },

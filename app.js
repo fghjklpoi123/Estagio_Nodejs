@@ -55,6 +55,7 @@ const aulaRoute = require('./route/aulaRoute');
 const checkinRoute = require('./route/checkinRoute');
 const lancamentoRoute = require('./route/lancamentoRoute');
 const logRoute = require('./route/logRoute');
+const feriadoRoute = require('./route/feriadoRoute');
 
 app.use('/api', loginRoute);
 app.use('/api', alunoRoute);
@@ -68,6 +69,7 @@ app.use('/api', aulaRoute);
 app.use('/api', checkinRoute);
 app.use('/api', lancamentoRoute);
 app.use('/api', logRoute);
+app.use('/api', feriadoRoute);
 
 const PORT = process.env.PORT || 3000;
 

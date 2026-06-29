@@ -34,6 +34,7 @@ function maskMoeda(value) {
 const FORM_VAZIO = { modalidadeId: '', valorStr: '', descricao: '' };
 
 export default function PlanosScreen() {
+  const styles = makeStyles();
   const [planos, setPlanos] = useState([]);
   const [modalidades, setModalidades] = useState([]);
   const [busca, setBusca] = useState('');
@@ -219,7 +220,7 @@ export default function PlanosScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.pageBg,
@@ -238,13 +239,13 @@ const styles = StyleSheet.create({
   },
   busca: {
     borderWidth: 2,
-    borderColor: '#ddd',
+    borderColor: colors.inputBorder,
     borderRadius: radius.sm,
     paddingVertical: 10,
     paddingHorizontal: 14,
     fontSize: 15,
-    backgroundColor: '#fff',
-    color: '#333',
+    backgroundColor: colors.cardBg,
+    color: colors.textDark,
   },
   btnNovo: {
     backgroundColor: colors.blue600,

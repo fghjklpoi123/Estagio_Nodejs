@@ -17,6 +17,7 @@ function formatarDataHora(d) {
 }
 
 export default function PresencasScreen() {
+  const styles = makeStyles();
   const [checkins, setCheckins] = useState([]);
   const [totalHoje, setTotalHoje] = useState(0);
   const [busca, setBusca] = useState('');
@@ -123,14 +124,14 @@ export default function PresencasScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.pageBg },
   content: { padding: 24 },
   heading: { fontSize: 28, fontWeight: '700', color: colors.textDark, marginBottom: 20 },
 
   resumoRow: { flexDirection: 'row', gap: 16, marginBottom: 20 },
   resumoCard: {
-    flex: 1, backgroundColor: '#fff', borderRadius: radius.lg, padding: 20, alignItems: 'center', gap: 6,
+    flex: 1, backgroundColor: colors.cardBg, borderRadius: radius.lg, padding: 20, alignItems: 'center', gap: 6,
     shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 1,
   },
   resumoNumero: { fontSize: 32, fontWeight: '700', color: colors.textDark },
@@ -138,8 +139,8 @@ const styles = StyleSheet.create({
 
   filtros: { gap: 10, marginBottom: 20 },
   busca: {
-    borderWidth: 2, borderColor: '#ddd', borderRadius: radius.sm,
-    paddingVertical: 10, paddingHorizontal: 14, fontSize: 15, backgroundColor: '#fff', color: '#333',
+    borderWidth: 2, borderColor: colors.inputBorder, borderRadius: radius.sm,
+    paddingVertical: 10, paddingHorizontal: 14, fontSize: 15, backgroundColor: colors.cardBg, color: colors.textDark,
   },
   filtroDataRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   filtroDataInput: { flex: 1 },
@@ -150,8 +151,8 @@ const styles = StyleSheet.create({
 
   checkinItem: {
     flexDirection: 'row', alignItems: 'center', gap: 14,
-    backgroundColor: '#fff', borderRadius: radius.sm, padding: 16, marginBottom: 8,
-    borderWidth: 1, borderColor: '#eee',
+    backgroundColor: colors.cardBg, borderRadius: radius.sm, padding: 16, marginBottom: 8,
+    borderWidth: 1, borderColor: colors.inputBorder,
   },
   checkinIcone: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#e8f5e9', alignItems: 'center', justifyContent: 'center' },
   checkinTextos: { flex: 1 },

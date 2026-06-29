@@ -1,13 +1,8 @@
 import { Drawer } from 'expo-router/drawer';
 import SidebarMenu from '../../src/components/SidebarMenu';
+import { useTheme } from '../../src/ThemeContext';
 import { colors } from '../../src/theme';
 
-// Equivalente mobile da <aside class="sidebar"> fixa do home.html: no celular
-// uma sidebar fixa de 260px não cabe, então vira um Drawer (menu deslizante,
-// aberto pelo botão "hambúrguer" no cabeçalho). O conteúdo do menu (gradiente,
-// logo, ícones, item ativo, "Sair") é todo desenhado em <SidebarMenu />, que
-// substitui o drawer padrão — por isso as telas abaixo só precisam do título
-// do cabeçalho.
 const TITLES = {
   home: 'Home',
   alunos: 'Alunos',
@@ -26,8 +21,11 @@ const TITLES = {
 };
 
 export default function DrawerLayout() {
+  const { isDark } = useTheme();
+
   return (
     <Drawer
+      key={isDark ? 'dark' : 'light'}
       drawerContent={() => <SidebarMenu />}
       screenOptions={{
         headerStyle: { backgroundColor: colors.blue700 },

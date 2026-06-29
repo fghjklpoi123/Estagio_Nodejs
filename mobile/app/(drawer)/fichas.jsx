@@ -3,11 +3,12 @@ import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, Text
 import { confirm } from '../../src/confirm';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../src/AuthContext';
-import { createAula, deleteAula, getAlunos, getAula, getAulas, getExercicios, getAlunoModalidades, getProfessores, updateAula } from '../../src/api';
+import { createAula, deleteAula, getAlunos, getAula, getAulas, getExercicios, getAlunoModalidades, getProfessores, updateAula, verificarFeriado } from '../../src/api';
 import { colors, radius } from '../../src/theme';
 import { maskData } from '../../src/masks';
 
 export default function FichasScreen() {
+  const styles = makeStyles();
   const { session } = useAuth();
 
   const [fichas, setFichas] = useState([]);
@@ -34,6 +35,14 @@ export default function FichasScreen() {
   const [observacao, setObservacao] = useState('');
   const [exerciciosSelecionados, setExerciciosSelecionados] = useState([]);
   const [erros, setErros] = useState({});
+  const [feriadoAviso, setFeriadoAviso] = useState(null);
+
+  useEffect(() => {
+    if (!dataAula || dataAula.length < 10) { setFeriadoAviso(null); return; }
+    verificarFeriado(dataAula)
+      .then((res) => setFeriadoAviso(res || { ehFeriado: false }))
+      .catch(() => setFeriadoAviso(null));
+  }, [dataAula]);
 
   // Detalhe (visualizar ficha)
   const [detalhe, setDetalhe] = useState(null);
@@ -324,6 +333,18 @@ export default function FichasScreen() {
                 keyboardType="number-pad"
                 maxLength={10}
               />
+              {feriadoAviso && (
+                <View style={[styles.feriadoBanner, !feriadoAviso.ehFeriado && styles.feriadoBannerOk]}>
+                  <Ionicons
+                    name={feriadoAviso.ehFeriado ? 'flag' : 'checkmark-circle'}
+                    size={16}
+                    color={feriadoAviso.ehFeriado ? '#f39c12' : colors.planoPreco}
+                  />
+                  <Text style={[styles.feriadoTexto, !feriadoAviso.ehFeriado && { color: colors.planoPreco }]}>
+                    {feriadoAviso.ehFeriado ? `Feriado: ${feriadoAviso.nome}` : 'Dia útil'}
+                  </Text>
+                </View>
+              )}
 
               {/* Observação geral */}
               <Text style={styles.label}>Observação geral</Text>
@@ -439,52 +460,52 @@ export default function FichasScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.pageBg },
   content: { padding: 24 },
   top: { marginBottom: 16, gap: 10 },
   heading: { fontSize: 28, fontWeight: '700', color: colors.textDark },
-  busca: { borderWidth: 2, borderColor: '#ddd', borderRadius: radius.sm, paddingVertical: 10, paddingHorizontal: 14, fontSize: 15, backgroundColor: '#fff', color: '#333' },
+  busca: { borderWidth: 2, borderColor: colors.inputBorder, borderRadius: radius.sm, paddingVertical: 10, paddingHorizontal: 14, fontSize: 15, backgroundColor: colors.cardBg, color: colors.textDark },
   btnNovo: { backgroundColor: colors.blue600, borderRadius: radius.sm, paddingVertical: 12, paddingHorizontal: 20, alignItems: 'center', alignSelf: 'flex-start' },
   btnNovoTexto: { color: '#fff', fontWeight: '700', fontSize: 14 },
   loading: { marginTop: 24 },
   empty: { color: colors.muted, fontSize: 13, marginTop: 16, fontStyle: 'italic' },
 
   lista: { flexDirection: 'row', flexWrap: 'wrap', gap: 20, marginTop: 10 },
-  card: { flexGrow: 1, flexBasis: 260, minWidth: 260, backgroundColor: '#fff', borderRadius: radius.lg, padding: 20, paddingTop: 50, position: 'relative', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 10, elevation: 2 },
+  card: { flexGrow: 1, flexBasis: 260, minWidth: 260, backgroundColor: colors.cardBg, borderRadius: radius.lg, padding: 20, paddingTop: 50, position: 'relative', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 10, elevation: 2 },
   cardActions: { position: 'absolute', top: 8, right: 8, flexDirection: 'row', gap: 8 },
   actionBtn: { padding: 6 },
   cardTitle: { fontSize: 18, fontWeight: '700', color: colors.textDark, marginTop: 8, marginBottom: 8 },
   cardSpan: { color: colors.muted, fontSize: 13, marginBottom: 4 },
 
   overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'center', alignItems: 'center', padding: 16 },
-  modalCard: { width: '100%', maxWidth: 540, maxHeight: '90%', backgroundColor: '#fff', borderRadius: radius.lg, padding: 16 },
+  modalCard: { width: '100%', maxWidth: 540, maxHeight: '90%', backgroundColor: colors.cardBg, borderRadius: radius.lg, padding: 16 },
   modalTitle: { fontSize: 18, fontWeight: '700', color: colors.textDark, marginBottom: 12 },
   modalActions: { gap: 10, marginTop: 20 },
 
-  label: { fontWeight: '600', color: '#333', fontSize: 14, marginTop: 12, marginBottom: 6 },
+  label: { fontWeight: '600', color: colors.textDark, fontSize: 14, marginTop: 12, marginBottom: 6 },
   labelErro: { color: colors.deleteBtn, fontWeight: '700' },
-  input: { paddingVertical: 10, paddingHorizontal: 12, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.inputBorder, backgroundColor: '#fff', fontSize: 14, color: colors.textDark },
+  input: { paddingVertical: 10, paddingHorizontal: 12, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.inputBorder, backgroundColor: colors.cardBg, fontSize: 14, color: colors.textDark },
   inputErro: { borderColor: colors.deleteBtn, backgroundColor: '#fff5f5' },
   textarea: { minHeight: 60, maxHeight: 150 },
 
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.inputBorder, backgroundColor: '#fff' },
+  chip: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.inputBorder, backgroundColor: colors.cardBg },
   chipAtivo: { backgroundColor: colors.blue600, borderColor: colors.blue600 },
   chipErro: { borderColor: colors.deleteBtn },
   chipTexto: { color: colors.textDark, fontSize: 13, fontWeight: '600' },
   chipTextoAtivo: { color: '#fff' },
   chipVazio: { color: colors.muted, fontSize: 13, fontStyle: 'italic' },
 
-  exercicioItem: { backgroundColor: '#f9fafb', borderRadius: radius.sm, borderWidth: 1, borderColor: '#eee', marginBottom: 10, overflow: 'hidden' },
+  exercicioItem: { backgroundColor: '#f9fafb', borderRadius: radius.sm, borderWidth: 1, borderColor: colors.inputBorder, marginBottom: 10, overflow: 'hidden' },
   exercicioHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 12 },
-  exercicioNome: { fontSize: 14, color: '#333', flexShrink: 1 },
+  exercicioNome: { fontSize: 14, color: colors.textDark, flexShrink: 1 },
   exercicioNomeSel: { fontWeight: '700', color: colors.blue600 },
   exercicioCampos: { paddingHorizontal: 12, paddingBottom: 12, gap: 6 },
   campoRow: { flexDirection: 'row', gap: 10 },
   campoItem: { flex: 1 },
   campoLabel: { fontSize: 11, color: colors.muted, fontWeight: '600', marginBottom: 3 },
-  campoInput: { paddingVertical: 7, paddingHorizontal: 10, borderRadius: 6, borderWidth: 1, borderColor: '#ddd', backgroundColor: '#fff', fontSize: 13, color: '#333' },
+  campoInput: { paddingVertical: 7, paddingHorizontal: 10, borderRadius: 6, borderWidth: 1, borderColor: colors.inputBorder, backgroundColor: colors.cardBg, fontSize: 13, color: colors.textDark },
 
   btn: { paddingVertical: 11, paddingHorizontal: 14, borderRadius: radius.sm, alignItems: 'center' },
   btnPrimary: { backgroundColor: colors.blue600 },
@@ -492,10 +513,14 @@ const styles = StyleSheet.create({
   btnSecondary: { backgroundColor: colors.btnSecondaryBg },
   btnSecondaryTexto: { color: colors.btnSecondaryTexto, fontWeight: '700', fontSize: 14 },
 
+  feriadoBanner: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#fef9e7', borderWidth: 1, borderColor: '#f9e79f', borderRadius: 6, padding: 10, marginTop: 6 },
+  feriadoBannerOk: { backgroundColor: '#e8f5e9', borderColor: '#c8e6c9' },
+  feriadoTexto: { fontSize: 13, fontWeight: '600', color: '#b7950b' },
+
   detalheLabel: { fontSize: 14, color: colors.muted, marginBottom: 4 },
   detalheValor: { fontWeight: '700', color: colors.textDark },
   detalheObs: { fontSize: 13, color: '#555', fontStyle: 'italic', marginTop: 8, marginBottom: 4 },
-  detalheExercicio: { backgroundColor: '#f9fafb', borderRadius: radius.sm, padding: 12, marginBottom: 8, borderWidth: 1, borderColor: '#eee' },
+  detalheExercicio: { backgroundColor: '#f9fafb', borderRadius: radius.sm, padding: 12, marginBottom: 8, borderWidth: 1, borderColor: colors.inputBorder },
   detalheExNome: { fontSize: 15, fontWeight: '700', color: colors.textDark, marginBottom: 4 },
   detalheExCampos: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   detalheExCampo: { fontSize: 13, color: colors.blue600, fontWeight: '600' },

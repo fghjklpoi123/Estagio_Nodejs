@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { fazerCheckin, historicoCheckins, statusCheckinHoje } from '../../src/api';
+import { fazerCheckin, historicoCheckins, statusCheckinHoje, verificarFeriado } from '../../src/api';
 import { colors, radius } from '../../src/theme';
 
 function formatarDataHora(d) {
@@ -22,20 +22,28 @@ function formatarDiaSemana(d) {
 }
 
 export default function CheckinScreen() {
+  const styles = makeStyles();
   const [fezHoje, setFezHoje] = useState(false);
   const [checkinHoje, setCheckinHoje] = useState(null);
   const [historico, setHistorico] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [enviando, setEnviando] = useState(false);
   const [status, setStatus] = useState(null);
+  const [feriadoHoje, setFeriadoHoje] = useState(null);
 
   const carregar = useCallback(async () => {
     setCarregando(true);
     try {
-      const [hojeData, historicoData] = await Promise.all([statusCheckinHoje(), historicoCheckins()]);
+      const hoje = new Date().toISOString().slice(0, 10);
+      const [hojeData, historicoData, feriadoData] = await Promise.all([
+        statusCheckinHoje(),
+        historicoCheckins(),
+        verificarFeriado(hoje).catch(() => null),
+      ]);
       setFezHoje(hojeData.fezCheckin);
       setCheckinHoje(hojeData.checkin);
       setHistorico(historicoData || []);
+      setFeriadoHoje(feriadoData || { ehFeriado: false });
     } catch {
       setHistorico([]);
     } finally {
@@ -81,6 +89,27 @@ export default function CheckinScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Text style={styles.heading}>Check-in</Text>
+
+      {/* Status de feriado */}
+      {feriadoHoje && (
+        <View style={[styles.feriadoBanner, !feriadoHoje.ehFeriado && styles.feriadoBannerOk]}>
+          <Ionicons
+            name={feriadoHoje.ehFeriado ? 'flag' : 'checkmark-circle'}
+            size={20}
+            color={feriadoHoje.ehFeriado ? '#f39c12' : colors.planoPreco}
+          />
+          <View style={{ flex: 1 }}>
+            {feriadoHoje.ehFeriado ? (
+              <>
+                <Text style={styles.feriadoTitulo}>Hoje é feriado!</Text>
+                <Text style={styles.feriadoNome}>{feriadoHoje.nome}</Text>
+              </>
+            ) : (
+              <Text style={styles.feriadoOk}>Nenhum feriado hoje — bom treino!</Text>
+            )}
+          </View>
+        </View>
+      )}
 
       {/* Botão de check-in */}
       <View style={styles.checkinBox}>
@@ -149,7 +178,7 @@ export default function CheckinScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.pageBg },
   content: { padding: 24 },
   heading: { fontSize: 28, fontWeight: '700', color: colors.textDark, marginBottom: 24 },
@@ -175,7 +204,7 @@ const styles = StyleSheet.create({
 
   resumoBox: {
     flexDirection: 'row', alignItems: 'center', gap: 14,
-    backgroundColor: '#fff', borderRadius: radius.lg, padding: 20,
+    backgroundColor: colors.cardBg, borderRadius: radius.lg, padding: 20,
     marginBottom: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 1,
   },
   resumoNumero: { fontSize: 28, fontWeight: '700', color: colors.textDark },
@@ -187,10 +216,22 @@ const styles = StyleSheet.create({
 
   historicoItem: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    backgroundColor: '#fff', borderRadius: radius.sm, padding: 14, marginBottom: 8,
-    borderWidth: 1, borderColor: '#eee',
+    backgroundColor: colors.cardBg, borderRadius: radius.sm, padding: 14, marginBottom: 8,
+    borderWidth: 1, borderColor: colors.inputBorder,
   },
   historicoTextos: { flex: 1 },
   historicoData: { fontSize: 14, fontWeight: '600', color: colors.textDark },
   historicoDia: { fontSize: 12, color: colors.muted },
+
+  feriadoBanner: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    backgroundColor: '#fef9e7', borderWidth: 1, borderColor: '#f9e79f',
+    borderRadius: radius.sm, padding: 14, marginBottom: 16,
+  },
+  feriadoBannerOk: {
+    backgroundColor: '#e8f5e9', borderColor: '#c8e6c9',
+  },
+  feriadoTitulo: { fontSize: 14, fontWeight: '700', color: '#b7950b' },
+  feriadoNome: { fontSize: 13, color: '#7d6608' },
+  feriadoOk: { fontSize: 14, fontWeight: '600', color: colors.planoPreco },
 });

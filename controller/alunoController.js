@@ -30,10 +30,10 @@ exports.buscarUm = async (req, res) => {
 }
 
 exports.inserir = async (req, res) => {
-    console.log(req.body)
     try {
-        const { name, cpf, telefone, sexo, data_nascimento, email, senha, endereco, situacao, obs } = req.body;
-        if (!name || name.trim() === '') {
+        const { name, nome: nomeBody, cpf, telefone, sexo, data_nascimento, email, senha, endereco, situacao, obs } = req.body;
+        const nomeFinal = (name || nomeBody || '').trim();
+        if (!nomeFinal) {
             return res.status(400).json({
                 error: 'Nome obrigatorio'
             });
@@ -71,7 +71,7 @@ exports.inserir = async (req, res) => {
             });
         }
 
-        const alunoObj = { nome: name, cpf: req.body.cpf, telefone: telefone || '', sexo, data_nascimento, email, senha, endereco: endereco || '', situacao: situacao || 'Ativo', obs: obs || '' };
+        const alunoObj = { nome: nomeFinal, cpf: req.body.cpf, telefone: telefone || '', sexo, data_nascimento, email, senha, endereco: endereco || '', situacao: situacao || 'Ativo', obs: obs || '' };
         const novoId = await cadastrarAluno(alunoObj);
         res.json({ id: novoId, ...alunoObj });
     } catch (error) {

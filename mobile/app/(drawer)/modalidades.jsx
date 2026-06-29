@@ -15,6 +15,7 @@ import { TextAreaField, TextField } from '../../src/components/FormFields';
 const FORM_VAZIO = { nome: '', descricao: '' };
 
 export default function ModalidadesScreen() {
+  const styles = makeStyles();
   const [modalidades, setModalidades] = useState([]);
   const [busca, setBusca] = useState('');
   const [carregando, setCarregando] = useState(true);
@@ -172,7 +173,7 @@ export default function ModalidadesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.pageBg,
@@ -191,13 +192,13 @@ const styles = StyleSheet.create({
   },
   busca: {
     borderWidth: 2,
-    borderColor: '#ddd',
+    borderColor: colors.inputBorder,
     borderRadius: radius.sm,
     paddingVertical: 10,
     paddingHorizontal: 14,
     fontSize: 15,
-    backgroundColor: '#fff',
-    color: '#333',
+    backgroundColor: colors.cardBg,
+    color: colors.textDark,
   },
   btnNovo: {
     backgroundColor: colors.blue600,
@@ -231,7 +232,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexBasis: 260,
     minWidth: 260,
-    backgroundColor: '#fff',
+    backgroundColor: colors.cardBg,
     borderRadius: radius.lg,
     padding: 20,
     paddingTop: 50,

@@ -37,6 +37,7 @@ function parseValorBr(str) {
 }
 
 export default function FinanceiroScreen() {
+  const styles = makeStyles();
   const [lancamentos, setLancamentos] = useState([]);
   const [resumo, setResumo] = useState({ total_receitas: 0, total_despesas: 0, balanco: 0 });
   const [carregando, setCarregando] = useState(true);
@@ -325,7 +326,7 @@ export default function FinanceiroScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.pageBg },
   content: { padding: 24 },
   heading: { fontSize: 28, fontWeight: '700', color: colors.textDark, marginBottom: 20 },
@@ -347,14 +348,14 @@ const styles = StyleSheet.create({
   filtros: { gap: 8, marginBottom: 16 },
   filtroRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   chipScroll: { gap: 6 },
-  chip: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 6, borderWidth: 1, borderColor: '#ccc', backgroundColor: '#fff' },
+  chip: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 6, borderWidth: 1, borderColor: colors.inputBorder, backgroundColor: colors.cardBg },
   chipAtivo: { backgroundColor: colors.blue600, borderColor: colors.blue600 },
   chipErro: { borderColor: colors.deleteBtn },
-  chipTexto: { color: '#333', fontWeight: '600', fontSize: 12 },
+  chipTexto: { color: colors.textDark, fontWeight: '600', fontSize: 12 },
   chipTextoAtivo: { color: '#fff' },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
 
-  tipoChip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 8, paddingHorizontal: 14, borderRadius: radius.sm, borderWidth: 1, borderColor: '#ccc', backgroundColor: '#fff' },
+  tipoChip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 8, paddingHorizontal: 14, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.inputBorder, backgroundColor: colors.cardBg },
 
   btnNovo: { backgroundColor: colors.blue600, borderRadius: radius.sm, paddingVertical: 12, paddingHorizontal: 20, alignItems: 'center', alignSelf: 'flex-start', marginBottom: 16 },
   btnNovoTexto: { color: '#fff', fontWeight: '700', fontSize: 14 },
@@ -362,7 +363,7 @@ const styles = StyleSheet.create({
   loading: { marginTop: 16 },
   empty: { color: colors.muted, fontSize: 13, fontStyle: 'italic', marginTop: 8 },
 
-  lancItem: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#fff', borderRadius: radius.sm, padding: 14, marginBottom: 8, borderWidth: 1, borderColor: '#eee' },
+  lancItem: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.cardBg, borderRadius: radius.sm, padding: 14, marginBottom: 8, borderWidth: 1, borderColor: colors.inputBorder },
   lancIcone: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   lancIconeReceita: { backgroundColor: colors.planoPreco },
   lancIconeDespesa: { backgroundColor: colors.deleteBtn },
@@ -377,13 +378,13 @@ const styles = StyleSheet.create({
   lancAcaoBtn: { padding: 4 },
 
   overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'center', alignItems: 'center', padding: 16 },
-  modalCard: { width: '100%', maxWidth: 500, maxHeight: '90%', backgroundColor: '#fff', borderRadius: radius.lg, padding: 16 },
+  modalCard: { width: '100%', maxWidth: 500, maxHeight: '90%', backgroundColor: colors.cardBg, borderRadius: radius.lg, padding: 16 },
   modalTitle: { fontSize: 18, fontWeight: '700', color: colors.textDark, marginBottom: 8 },
   modalActions: { gap: 10, marginTop: 20 },
 
-  label: { fontWeight: '600', color: '#333', fontSize: 14, marginTop: 12, marginBottom: 6 },
+  label: { fontWeight: '600', color: colors.textDark, fontSize: 14, marginTop: 12, marginBottom: 6 },
   labelErro: { color: colors.deleteBtn, fontWeight: '700' },
-  input: { paddingVertical: 10, paddingHorizontal: 12, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.inputBorder, backgroundColor: '#fff', fontSize: 14, color: colors.textDark },
+  input: { paddingVertical: 10, paddingHorizontal: 12, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.inputBorder, backgroundColor: colors.cardBg, fontSize: 14, color: colors.textDark },
   inputErro: { borderColor: colors.deleteBtn, backgroundColor: '#fff5f5' },
   textarea: { minHeight: 60, maxHeight: 150 },
 

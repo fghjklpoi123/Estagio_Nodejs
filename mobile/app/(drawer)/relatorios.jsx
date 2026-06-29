@@ -78,6 +78,7 @@ function formatarData(d) {
 }
 
 export default function RelatoriosScreen() {
+  const styles = makeStyles();
   const [entidade, setEntidade] = useState('');
   const [filtros, setFiltros] = useState({});
   const [resultado, setResultado] = useState(null);
@@ -232,28 +233,28 @@ export default function RelatoriosScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.pageBg },
   content: { padding: 24 },
   heading: { fontSize: 28, fontWeight: '700', color: colors.textDark, marginBottom: 20 },
-  label: { fontWeight: '600', color: '#333', fontSize: 14, marginBottom: 10 },
+  label: { fontWeight: '600', color: colors.textDark, fontSize: 14, marginBottom: 10 },
 
   entidadeRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
-  entidadeChip: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 12, paddingHorizontal: 16, borderRadius: radius.sm, borderWidth: 2, borderColor: colors.blue600, backgroundColor: '#fff' },
+  entidadeChip: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 12, paddingHorizontal: 16, borderRadius: radius.sm, borderWidth: 2, borderColor: colors.blue600, backgroundColor: colors.cardBg },
   entidadeChipAtivo: { backgroundColor: colors.blue600 },
   entidadeTexto: { fontSize: 14, fontWeight: '700', color: colors.blue600 },
   entidadeTextoAtivo: { color: '#fff' },
 
-  filtrosBox: { backgroundColor: '#fff', borderRadius: radius.lg, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: '#eee' },
+  filtrosBox: { backgroundColor: colors.cardBg, borderRadius: radius.lg, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: colors.inputBorder },
   filtrosTitulo: { fontSize: 15, fontWeight: '700', color: colors.textDark, marginBottom: 12 },
   filtroItem: { marginBottom: 12 },
   filtroLabel: { fontSize: 13, fontWeight: '600', color: colors.muted, marginBottom: 6 },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  chip: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 6, borderWidth: 1, borderColor: '#ccc', backgroundColor: '#f9f9f9' },
+  chip: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 6, borderWidth: 1, borderColor: colors.inputBorder, backgroundColor: '#f9f9f9' },
   chipAtivo: { backgroundColor: colors.blue600, borderColor: colors.blue600 },
-  chipTexto: { color: '#333', fontWeight: '600', fontSize: 12 },
+  chipTexto: { color: colors.textDark, fontWeight: '600', fontSize: 12 },
   chipTextoAtivo: { color: '#fff' },
-  filtroInput: { borderWidth: 1, borderColor: '#ddd', borderRadius: radius.sm, paddingVertical: 8, paddingHorizontal: 12, fontSize: 14, backgroundColor: '#fff', color: '#333' },
+  filtroInput: { borderWidth: 1, borderColor: colors.inputBorder, borderRadius: radius.sm, paddingVertical: 8, paddingHorizontal: 12, fontSize: 14, backgroundColor: colors.cardBg, color: colors.textDark },
 
   btnGerar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: colors.blue600, borderRadius: radius.sm, paddingVertical: 14, marginBottom: 20 },
   btnGerarTexto: { color: '#fff', fontWeight: '700', fontSize: 16 },
@@ -270,7 +271,7 @@ const styles = StyleSheet.create({
   th: { width: 130, fontSize: 11, fontWeight: '700', color: colors.blue600, textTransform: 'uppercase', paddingVertical: 10, paddingHorizontal: 8 },
   tabelaRow: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#eee' },
   tabelaRowAlt: { backgroundColor: '#f9fafb' },
-  td: { width: 130, fontSize: 13, color: '#333', paddingVertical: 10, paddingHorizontal: 8 },
+  td: { width: 130, fontSize: 13, color: colors.textDark, paddingVertical: 10, paddingHorizontal: 8 },
 
   empty: { color: colors.muted, fontSize: 13, fontStyle: 'italic', marginTop: 8 },
   erroBox: { backgroundColor: colors.erroBg, borderRadius: radius.sm, padding: 14, marginTop: 12 },

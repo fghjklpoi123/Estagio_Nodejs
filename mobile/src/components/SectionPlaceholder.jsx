@@ -6,6 +6,7 @@ import { colors } from '../theme';
 // links mortos — quando essas seções forem portadas, este arquivo é substituído
 // pela tela real de cada uma.
 export default function SectionPlaceholder({ title }) {
+  const styles = makeStyles();
   return (
     <View style={styles.container}>
       <Text style={styles.emoji}>🚧</Text>
@@ -15,7 +16,7 @@ export default function SectionPlaceholder({ title }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
