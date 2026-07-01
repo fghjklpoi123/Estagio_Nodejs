@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { alunosPorModalidade, modalidadesPopulares, alunosSemModalidade } = require('../controller/relatorioController');
+const { dinamico } = require('../controller/relatorioController');
+const { autenticar, autorizar } = require('../middleware/auth');
 
-router.get('/relatorios/alunos-por-modalidade', alunosPorModalidade);
-router.get('/relatorios/modalidades-populares', modalidadesPopulares);
-router.get('/relatorios/alunos-sem-modalidade', alunosSemModalidade);
+router.get('/relatorios', autenticar, autorizar('admin'), dinamico);
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const { assinarPlano } = require('../service/planoService');
 const { listarPlanos, buscarPlanoPorId, cadastrarPlano, atualizarPlano, deletarPlano } = require('../model/plano');
+const { listarPlanosPorAluno, desvincularAlunoPlano } = require('../model/alunoPlano');
 
 exports.listar = async (req, res) => {
     try {
@@ -140,5 +141,30 @@ exports.assinar = async (req, res) => {
     } catch (error) {
         console.error('Erro no controller assinar:', error);
         return res.status(500).json({ erro: 'Erro ao assinar plano' });
+    }
+};
+
+exports.meusPlanos = async (req, res) => {
+    try {
+        const alunoId = req.alunoId;
+        const planos = await listarPlanosPorAluno(alunoId);
+        res.json(planos);
+    } catch (error) {
+        console.error('Erro ao listar planos do aluno:', error);
+        res.status(500).json({ erro: 'Erro ao listar planos' });
+    }
+};
+
+exports.cancelarPlano = async (req, res) => {
+    try {
+        const alunoId = req.alunoId;
+        const { planoId } = req.params;
+        if (!planoId || isNaN(planoId)) return res.status(400).json({ erro: 'planoId inválido' });
+
+        await desvincularAlunoPlano(alunoId, Number(planoId));
+        res.json({ mensagem: 'Plano cancelado com sucesso' });
+    } catch (error) {
+        console.error('Erro ao cancelar plano:', error);
+        res.status(500).json({ erro: 'Erro ao cancelar plano' });
     }
 };
