@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const path = require('path');
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -12,7 +13,6 @@ const corsConfig = {
 }
 app.use(cors(corsConfig));
 
-app.use(cors(corsConfig));
 app.use(express.json());
 
 app.use(bodyParser.json({
@@ -23,7 +23,8 @@ app.use(bodyParser.urlencoded({
     extended: true
 }))
 
-app.get('/', (req, res) => {
+// health check da API (antes era a rota '/', movida pra não conflitar com o app)
+app.get('/api/status', (req, res) => {
     res.json({ mensagem: 'API AcadFlow rodando' });
 });
 
@@ -73,6 +74,14 @@ app.use('/api', checkinRoute);
 app.use('/api', lancamentoRoute);
 app.use('/api', logRoute);
 app.use('/api', feriadoRoute);
+
+// serve os arquivos estáticos do app (gerados por: npx expo export -p web)
+app.use(express.static(path.join(__dirname, 'mobile/dist')));
+
+// qualquer rota que não seja /api cai no index.html do app (rotas do expo-router)
+app.get(/^(?!\/api).*/, (req, res) => {
+    res.sendFile(path.join(__dirname, 'mobile/dist/index.html'));
+});
 
 // porta do render
 const PORT = process.env.PORT || 3000;
